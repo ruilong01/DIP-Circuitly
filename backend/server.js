@@ -87,6 +87,48 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
+app.get('/api/users', async (req, res) => {
+    try {
+        const result = await db.query(`
+            SELECT 
+                u.id, 
+                u.username, 
+                u.student_id AS "studentId", 
+                u.name, 
+                u.class_group AS "classGroup",
+                u.xp, 
+                u.hearts, 
+                u.role,
+                u.last_active AS "lastActive"
+            FROM users u
+            ORDER BY u.xp DESC
+        `);
+
+        // Get progress for all users
+        const users = result.rows;
+        for (let user of users) {
+             const progResult = await db.query(
+                'SELECT topic_id, xp_earned, time_spent AS "timeSpent" FROM topic_progress WHERE user_id = $1',
+                [user.id]
+            );
+            user.topicProgress = {};
+            progResult.rows.forEach(row => {
+                user.topicProgress[row.topic_id] = { 
+                    xp: row.xp_earned,
+                    time: row.timeSpent
+                };
+            });
+            // Detailed stats mapping
+            user.stats = user.topicProgress; 
+        }
+
+        res.json({ success: true, users });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Failed to fetch users' });
+    }
+});
+
 app.post('/api/progress', async (req, res) => {
     const { studentId, xp, hearts, topicProgress } = req.body;
 

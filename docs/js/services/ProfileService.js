@@ -25,6 +25,21 @@ window.ProfileService = {
         return this.profiles;
     },
 
+    getAllProfiles: async function () {
+        if (window.DataService.isOnline) {
+            try {
+                const res = await fetch(`${window.CONFIG.API_BASE_URL}/api/users`);
+                const data = await res.json();
+                if (data.success) {
+                    return data.users;
+                }
+            } catch (e) {
+                console.error("Failed to fetch all profiles from backend:", e);
+            }
+        }
+        return this.profiles; // Fallback to local
+    },
+
     getActiveProfile: function () {
         if (!this.activeProfileId) return null;
         return this.profiles.find(p => p.studentId === this.activeProfileId);
