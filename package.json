@@ -1,0 +1,12 @@
+{
+  "name": "dip-circuitly",
+  "version": "1.0.0",
+  "description": "Root package for DIP-Circuitly",
+  "scripts": {
+    "start": "node backend/server.js",
+    "build": "cd backend && npm install"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
