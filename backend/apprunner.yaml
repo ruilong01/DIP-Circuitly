@@ -14,3 +14,13 @@ run:
   env:
     - name: NODE_ENV
       value: "production"
+    - name: DB_HOST
+      value: "database-1.cd8g6ywscrnp.ap-southeast-1.rds.amazonaws.com"
+    - name: DB_PORT
+      value: "5432"
+    - name: DB_NAME
+      value: "postgres"
+    - name: DB_USER
+      value: "postgres"
+    - name: DB_PASSWORD
+      value: "YOUR_REAL_RDS_PASSWORD"
