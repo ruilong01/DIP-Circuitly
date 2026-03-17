@@ -234,6 +234,27 @@ window.ProfileService = {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.profiles));
     },
 
+    logBehaviour: async function (actionType, metadata = {}) {
+        if (!this.activeProfileId || this.activeProfileId === 'ADMIN') return;
+
+        if (window.DataService && window.DataService.isOnline) {
+            try {
+                // Ensure we don't block the UI while logging
+                fetch(`${window.CONFIG.API_BASE_URL}/api/behaviours`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        studentId: this.activeProfileId,
+                        actionType: actionType,
+                        metadata: metadata
+                    })
+                }).catch(e => console.warn("Background log failed:", e));
+            } catch (e) {
+                console.warn("Failed to log behaviour:", e);
+            }
+        }
+    },
+
     exportToExcel: function () {
         if (!window.XLSX) {
             alert("Excel export library (SheetJS) is not loaded.");

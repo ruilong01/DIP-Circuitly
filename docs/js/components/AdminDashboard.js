@@ -11,9 +11,31 @@ window.AdminDashboard = function ({ onLogout }) {
     title.style.marginBottom = '20px';
     container.appendChild(title);
 
+    const tabContainer = document.createElement('div');
+    tabContainer.style.display = 'flex';
+    tabContainer.style.gap = '10px';
+    tabContainer.style.marginBottom = '20px';
+
+    const usersTab = document.createElement('button');
+    usersTab.className = 'btn btn-primary';
+    usersTab.textContent = 'User Progress';
+
+    const logsTab = document.createElement('button');
+    logsTab.className = 'btn btn-secondary';
+    logsTab.textContent = 'Behaviour Logs';
+
+    tabContainer.appendChild(usersTab);
+    tabContainer.appendChild(logsTab);
+    container.appendChild(tabContainer);
+
+    const contentArea = document.createElement('div');
+    container.appendChild(contentArea);
+
     const renderTable = async () => {
+        contentArea.innerHTML = 'Loading profiles...';
         const profiles = await window.ProfileService.getAllProfiles();
         
+        contentArea.innerHTML = '';
         const tableContainer = document.createElement('div');
         tableContainer.style.overflowX = 'auto';
         tableContainer.style.background = '#1f2937';
@@ -41,58 +63,138 @@ window.AdminDashboard = function ({ onLogout }) {
 
         const tbody = document.createElement('tbody');
         if (profiles.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" style="padding:20px; text-align:center; color:#9ca3af;">No users found.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="padding:20px; text-align:center; color:#9ca3af;">No users found.</td></tr>`;
         } else {
-        profiles.forEach(p => {
-            const tr = document.createElement('tr');
-            tr.style.borderBottom = '1px solid #374151';
+            profiles.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = '1px solid #374151';
 
-            // Format Date
-            let dateStr = 'Never';
-            if (p.lastActive) {
-                dateStr = new Date(p.lastActive).toLocaleDateString();
-            } else if (p.createdAt) {
-                dateStr = new Date(p.createdAt).toLocaleDateString();
-            }
-
-            // Calculate total time
-            const totalTimeSec = Object.values(p.topicProgress || {}).reduce((acc, curr) => acc + (curr.time || 0), 0);
-            const totalTimeMin = Math.round(totalTimeSec / 60);
-
-            tr.innerHTML = `
-                <td style="padding: 12px; font-weight:bold;">${p.name}</td>
-                <td style="padding: 12px;">${p.studentId}</td>
-                <td style="padding: 12px;">${p.classGroup || '-'}</td>
-                <td style="padding: 12px; color:var(--primary); font-family:monospace;">${p.xp}</td>
-                <td style="padding: 12px;">${totalTimeMin}m</td>
-                <td style="padding: 12px; font-size:0.9rem; color:#9ca3af;">${dateStr}</td>
-                <td style="padding: 12px;"></td>
-            `;
-
-            // Action Cell
-            const actionTd = tr.querySelector('td:last-child');
-
-            const viewBtn = document.createElement('button');
-            viewBtn.textContent = 'View Stats';
-            viewBtn.className = 'btn btn-secondary';
-            viewBtn.style.padding = '4px 8px';
-            viewBtn.style.fontSize = '0.8rem';
-            viewBtn.onclick = () => {
-                if (window.StatsChart) {
-                    window.StatsChart({ stats: p.stats });
-                } else {
-                    alert("Stats module missing");
+                let dateStr = 'Never';
+                if (p.lastActive) {
+                    dateStr = new Date(p.lastActive).toLocaleDateString();
+                } else if (p.createdAt) {
+                    dateStr = new Date(p.createdAt).toLocaleDateString();
                 }
-            };
-            actionTd.appendChild(viewBtn);
 
-            tbody.appendChild(tr);
-        });
-    }
+                const totalTimeSec = Object.values(p.topicProgress || {}).reduce((acc, curr) => acc + (curr.time || 0), 0);
+                const totalTimeMin = Math.round(totalTimeSec / 60);
+
+                tr.innerHTML = `
+                    <td style="padding: 12px; font-weight:bold;">${p.name}</td>
+                    <td style="padding: 12px;">${p.studentId}</td>
+                    <td style="padding: 12px;">${p.classGroup || '-'}</td>
+                    <td style="padding: 12px; color:var(--primary); font-family:monospace;">${p.xp}</td>
+                    <td style="padding: 12px;">${totalTimeMin}m</td>
+                    <td style="padding: 12px; font-size:0.9rem; color:#9ca3af;">${dateStr}</td>
+                    <td style="padding: 12px;"></td>
+                `;
+
+                const actionTd = tr.querySelector('td:last-child');
+                const viewBtn = document.createElement('button');
+                viewBtn.textContent = 'View Stats';
+                viewBtn.className = 'btn btn-secondary';
+                viewBtn.style.padding = '4px 8px';
+                viewBtn.style.fontSize = '0.8rem';
+                viewBtn.onclick = () => {
+                    if (window.StatsChart) {
+                        window.StatsChart({ stats: p.stats });
+                    } else {
+                        alert("Stats module missing");
+                    }
+                };
+                actionTd.appendChild(viewBtn);
+                tbody.appendChild(tr);
+            });
+        }
 
         table.appendChild(tbody);
         tableContainer.appendChild(table);
-        container.appendChild(tableContainer);
+        contentArea.appendChild(tableContainer);
+    };
+
+    const renderLogs = async () => {
+        contentArea.innerHTML = 'Loading logs...';
+        
+        let behaviours = [];
+        if (window.DataService && window.DataService.isOnline) {
+            try {
+                const res = await fetch(`${window.CONFIG.API_BASE_URL}/api/behaviours`);
+                const data = await res.json();
+                if (data.success) {
+                    behaviours = data.behaviours;
+                }
+            } catch (e) {
+                console.error("Failed to fetch logs:", e);
+                contentArea.innerHTML = '<div style="color:red; padding:20px;">Failed to load logs. Backend might be unreachable.</div>';
+                return;
+            }
+        } else {
+            contentArea.innerHTML = '<div style="color:#9ca3af; padding:20px;">Backend is offline. Cannot fetch behaviours.</div>';
+            return;
+        }
+
+        contentArea.innerHTML = '';
+        const tableContainer = document.createElement('div');
+        tableContainer.style.overflowX = 'auto';
+        tableContainer.style.background = '#1f2937';
+        tableContainer.style.borderRadius = '12px';
+        tableContainer.style.padding = '20px';
+
+        const table = document.createElement('table');
+        table.style.width = '100%';
+        table.style.borderCollapse = 'collapse';
+        table.style.color = '#e5e7eb';
+        table.style.fontSize = '0.9rem';
+
+        const thead = document.createElement('thead');
+        thead.innerHTML = `
+            <tr style="border-bottom: 2px solid #374151; text-align: left;">
+                <th style="padding: 12px;">Time</th>
+                <th style="padding: 12px;">User</th>
+                <th style="padding: 12px;">Action</th>
+                <th style="padding: 12px;">Metadata</th>
+            </tr>
+        `;
+        table.appendChild(thead);
+
+        const tbody = document.createElement('tbody');
+        if (behaviours.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" style="padding:20px; text-align:center; color:#9ca3af;">No behaviours logged yet.</td></tr>`;
+        } else {
+            behaviours.forEach(b => {
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = '1px solid #374151';
+                
+                let metaText = '-';
+                if (b.metadata && Object.keys(b.metadata).length > 0) {
+                    metaText = JSON.stringify(b.metadata).replace(/[{""}]/g, '').replace(/,/g, ', ');
+                }
+
+                tr.innerHTML = `
+                    <td style="padding: 12px; white-space: nowrap;">${new Date(b.timestamp).toLocaleString()}</td>
+                    <td style="padding: 12px; font-weight:bold;">${b.name}<br><span style="font-size:0.8rem;color:#9ca3af;font-weight:normal;">${b.studentId}</span></td>
+                    <td style="padding: 12px;"><span style="background:rgba(59,130,246,0.2);color:#3b82f6;padding:4px 8px;border-radius:4px;">${b.actionType}</span></td>
+                    <td style="padding: 12px; font-family:monospace; font-size:0.8rem; color:#d1d5db;">${metaText}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        table.appendChild(tbody);
+        tableContainer.appendChild(table);
+        contentArea.appendChild(tableContainer);
+    };
+
+    usersTab.onclick = () => {
+        usersTab.className = 'btn btn-primary';
+        logsTab.className = 'btn btn-secondary';
+        renderTable();
+    };
+
+    logsTab.onclick = () => {
+        logsTab.className = 'btn btn-primary';
+        usersTab.className = 'btn btn-secondary';
+        renderLogs();
     };
 
     renderTable();

@@ -42,3 +42,12 @@ CREATE TABLE IF NOT EXISTS questions (
 
 CREATE INDEX IF NOT EXISTS idx_questions_topic ON questions(topic_id);
 CREATE INDEX IF NOT EXISTS idx_progress_user ON topic_progress(user_id);
+
+CREATE TABLE IF NOT EXISTS user_behaviours (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    action_type VARCHAR(100) NOT NULL,
+    metadata JSONB,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_behaviours_user ON user_behaviours(user_id);

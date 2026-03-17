@@ -127,6 +127,11 @@ function render() { // Inside render, code looks at state.view and matches it ag
             const logoutBtn = document.getElementById('logout-btn');
             if (logoutBtn) logoutBtn.onclick = () => {
                 if (confirm('Log out?')) {
+                    // Log the behavior before clearing state
+                    if (window.ProfileService && State.studentId) {
+                        window.ProfileService.logBehaviour('user_logout');
+                    }
+                    
                     // Clear Logic
                     State.username = null;
                     State.studentId = null;
@@ -176,6 +181,7 @@ function render() { // Inside render, code looks at state.view and matches it ag
                     onLogin: async (username, password) => {
                         const result = await window.ProfileService.authenticate(username, password);
                         if (result.success) {
+                            window.ProfileService.logBehaviour('user_login', { username: username });
                             loadUser(result.profile);
                         } else {
                             alert(result.error);
@@ -187,7 +193,10 @@ function render() { // Inside render, code looks at state.view and matches it ag
                             // Auto login after signup? Or ask to login?
                             // Let's auto-login for better UX
                             const auth = await window.ProfileService.authenticate(data.username, data.password);
-                            if (auth.success) loadUser(auth.profile);
+                            if (auth.success) {
+                                window.ProfileService.logBehaviour('user_registered', { username: data.username });
+                                loadUser(auth.profile);
+                            }
                         } else {
                             alert(result.error);
                         }
@@ -212,6 +221,7 @@ function render() { // Inside render, code looks at state.view and matches it ag
                         }
                         State.activeTopicId = topicId;
                         State.view = ROUTES.QUIZ;
+                        window.ProfileService.logBehaviour('quiz_started', { topicId: topicId });
                         render();
                     },
                     onStartRevision: () => {
@@ -221,10 +231,12 @@ function render() { // Inside render, code looks at state.view and matches it ag
                         }
                         State.activeTopicId = 'revision';
                         State.view = ROUTES.QUIZ;
+                        window.ProfileService.logBehaviour('revision_started');
                         render();
                     },
                     onStartUnfamiliar: () => {
                         State.view = ROUTES.UNFAMILIAR;
+                        window.ProfileService.logBehaviour('unfamiliar_started');
                         render();
                     }
                 });
@@ -236,6 +248,7 @@ function render() { // Inside render, code looks at state.view and matches it ag
                 component = window.UnfamiliarConceptsModule({
                     onExit: () => {
                         State.view = ROUTES.HOME;
+                        window.ProfileService.logBehaviour('unfamiliar_exited');
                         render();
                     }
                 });
@@ -307,10 +320,22 @@ function render() { // Inside render, code looks at state.view and matches it ag
                         }
 
                         syncState();
+                        
+                        window.ProfileService.logBehaviour('quiz_completed', { 
+                            topicId: State.activeTopicId,
+                            isRevision: isRevision,
+                            score: earnedScore,
+                            correctCount: result.correctCount,
+                            totalQuestions: result.totalQuestions,
+                            timeSpent: timeSpent,
+                            passed: passed
+                        });
+
                         State.view = ROUTES.HOME;
                         render();
                     },
                     onExit: () => {
+                        window.ProfileService.logBehaviour('quiz_exited_early', { topicId: State.activeTopicId });
                         State.view = ROUTES.HOME;
                         render();
                     }
@@ -333,6 +358,7 @@ function render() { // Inside render, code looks at state.view and matches it ag
                     onProfileSwitched: () => {
                         const profile = window.ProfileService.getActiveProfile();
                         if (profile) {
+                            window.ProfileService.logBehaviour('profile_switched');
                             loadUser(profile);
                         }
                     }

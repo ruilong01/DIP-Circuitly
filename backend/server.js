@@ -201,6 +201,52 @@ app.get('/api/questions/:topicId', async (req, res) => {
     }
 });
 
+// User Behaviour Logging
+app.post('/api/behaviours', async (req, res) => {
+    const { studentId, actionType, metadata } = req.body;
+
+    try {
+        const userRes = await db.query('SELECT id FROM users WHERE student_id = $1', [studentId]);
+        if (userRes.rows.length === 0) {
+            return res.status(404).json({ success: false, error: 'User not found' });
+        }
+        const userId = userRes.rows[0].id;
+
+        await db.query(
+            'INSERT INTO user_behaviours (user_id, action_type, metadata) VALUES ($1, $2, $3)',
+            [userId, actionType, JSON.stringify(metadata || {})]
+        );
+
+        res.json({ success: true, message: 'Behaviour logged' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Failed to log behaviour' });
+    }
+});
+
+app.get('/api/behaviours', async (req, res) => {
+    try {
+        const result = await db.query(`
+            SELECT 
+                b.id,
+                u.name,
+                u.student_id AS "studentId",
+                b.action_type AS "actionType",
+                b.metadata,
+                b.timestamp
+            FROM user_behaviours b
+            JOIN users u ON b.user_id = u.id
+            ORDER BY b.timestamp DESC
+            LIMIT 500
+        `);
+
+        res.json({ success: true, behaviours: result.rows });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Failed to fetch behaviours' });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
