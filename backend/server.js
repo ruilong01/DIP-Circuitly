@@ -91,7 +91,7 @@ app.post('/api/auth/login', async (req, res) => {
     }
 });
 
-app.get('/api/users', async (req, res) => {
+const getUsersHandler = async (req, res) => {
     try {
         const result = await db.query(`
             SELECT 
@@ -129,7 +129,7 @@ app.get('/api/users', async (req, res) => {
         // Attach progress to each user
         users.forEach(user => {
             user.topicProgress = progressMap[user.id] || {};
-            user.stats = user.topicProgress; // For backwards compatibility if any component uses tracker version
+            user.stats = user.topicProgress; // For backwards compatibility
         });
 
         res.json({ success: true, users });
@@ -137,13 +137,10 @@ app.get('/api/users', async (req, res) => {
         console.error(err);
         res.status(500).json({ success: false, error: 'Failed to fetch users' });
     }
-});
+};
 
-// Alias for admin convenience
-app.get('/api/admin/users', async (req, res) => {
-    // Re-use the same logic as /api/users for performance data
-    return app._router.handle({ method: 'get', url: '/api/users' }, res);
-});
+app.get('/api/users', getUsersHandler);
+app.get('/api/admin/users', getUsersHandler);
 
 app.post('/api/progress', async (req, res) => {
     const { studentId, xp, hearts, topicProgress } = req.body;
