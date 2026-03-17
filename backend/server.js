@@ -15,7 +15,13 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../docs')));
 
 app.get('/api/health', async (req, res) => {
-    res.json({ success: true, message: 'Backend is running' });
+    try {
+        await db.query('SELECT 1');
+        res.json({ success: true, message: 'Backend and Database are connected' });
+    } catch (err) {
+        console.error('Health check failed:', err);
+        res.status(500).json({ success: false, message: 'Database connection failed' });
+    }
 });
 
 app.post('/api/auth/register', async (req, res) => {
@@ -102,23 +108,29 @@ app.get('/api/users', async (req, res) => {
             ORDER BY u.xp DESC
         `);
 
-        // Get progress for all users
         const users = result.rows;
-        for (let user of users) {
-             const progResult = await db.query(
-                'SELECT topic_id, xp_earned, time_spent AS "timeSpent" FROM topic_progress WHERE user_id = $1',
-                [user.id]
-            );
-            user.topicProgress = {};
-            progResult.rows.forEach(row => {
-                user.topicProgress[row.topic_id] = { 
-                    xp: row.xp_earned,
-                    time: row.timeSpent
-                };
-            });
-            // Detailed stats mapping
-            user.stats = user.topicProgress; 
-        }
+        
+        // Fetch all progress record to mapping
+        const allProgResult = await db.query(`
+            SELECT user_id, topic_id, xp_earned, time_spent 
+            FROM topic_progress
+        `);
+
+        // Group progress by user_id
+        const progressMap = {};
+        allProgResult.rows.forEach(row => {
+            if (!progressMap[row.user_id]) progressMap[row.user_id] = {};
+            progressMap[row.user_id][row.topic_id] = {
+                xp: row.xp_earned,
+                time: row.time_spent
+            };
+        });
+
+        // Attach progress to each user
+        users.forEach(user => {
+            user.topicProgress = progressMap[user.id] || {};
+            user.stats = user.topicProgress; // For backwards compatibility if any component uses tracker version
+        });
 
         res.json({ success: true, users });
     } catch (err) {
@@ -127,31 +139,40 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
+// Alias for admin convenience
+app.get('/api/admin/users', async (req, res) => {
+    // Re-use the same logic as /api/users for performance data
+    return app._router.handle({ method: 'get', url: '/api/users' }, res);
+});
+
 app.post('/api/progress', async (req, res) => {
     const { studentId, xp, hearts, topicProgress } = req.body;
 
     try {
-        // 1. Get user id from studentId
         const userRes = await db.query('SELECT id FROM users WHERE student_id = $1', [studentId]);
         if (userRes.rows.length === 0) {
             return res.status(404).json({ success: false, error: 'User not found' });
         }
         const userId = userRes.rows[0].id;
 
-        // 2. Update user XP and hearts
         await db.query(
             'UPDATE users SET xp = $1, hearts = $2, last_active = NOW() WHERE id = $3',
             [xp, hearts, userId]
         );
 
-        // 3. Update topic progress (upsert)
         for (const [topicId, data] of Object.entries(topicProgress)) {
+            // data.time might be null/missing from old clients, default to 0
+            const timeToAdd = data.time || 0;
+            
             await db.query(
-                `INSERT INTO topic_progress (user_id, topic_id, xp_earned)
-                 VALUES ($1, $2, $3)
+                `INSERT INTO topic_progress (user_id, topic_id, xp_earned, time_spent)
+                 VALUES ($1, $2, $3, $4)
                  ON CONFLICT (user_id, topic_id) 
-                 DO UPDATE SET xp_earned = EXCLUDED.xp_earned, last_attempt = NOW()`,
-                [userId, parseInt(topicId, 10), data.xp]
+                 DO UPDATE SET 
+                    xp_earned = EXCLUDED.xp_earned, 
+                    time_spent = topic_progress.time_spent + EXCLUDED.time_spent,
+                    last_attempt = NOW()`,
+                [userId, parseInt(topicId, 10), data.xp, timeToAdd]
             );
         }
 

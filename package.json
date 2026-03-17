@@ -4,7 +4,8 @@
   "description": "Root package for DIP-Circuitly",
   "scripts": {
     "start": "node backend/server.js",
-    "build": "cd backend && npm install"
+    "build": "cd backend && npm install",
+    "lint": "eslint docs/js/ --config eslint.config.mjs"
   },
   "engines": {
     "node": ">=22.0.0"
@@ -15,5 +16,9 @@
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "pg": "^8.20.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.3"
   }
 }

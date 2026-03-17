@@ -223,7 +223,9 @@ window.DataService = {
                         if (newQ && newQ.options && newQ.correctAnswer) {
                             testQs.push(newQ);
                         }
-                    } catch (e) {}
+                    } catch (e) {
+                        console.warn("Problem generating test circuit question:", e);
+                    }
                 }
             }
             return shuffle(testQs);
