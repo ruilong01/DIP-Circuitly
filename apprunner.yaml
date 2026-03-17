@@ -23,4 +23,4 @@ run:
     - name: DB_USER
       value: "postgres"
     - name: DB_PASSWORD
-      value: "YOUR_REAL_RDS_PASSWORD"
+      value: DipCircuitlyPg2026!
