@@ -11,6 +11,17 @@ run:
   command: node backend/server.js
   network:
     port: 3000
+  # --- Instance sizing for ~800 concurrent users ---
+  # Each instance handles up to 100 concurrent requests.
+  # App Runner auto-scales: 800 users / 100 per instance = ~8 instances max.
+  # 8 instances × 20 DB connections = 160 total connections (safe for RDS).
+  instance_configuration:
+    cpu: 1 vCPU
+    memory: 2 GB
+  scaling_configuration:
+    max_concurrency: 100        # Spin up new instance when this is reached
+    min_size: 1                 # Always keep at least 1 instance warm
+    max_size: 10                # Cap at 10 instances (handles 1000 users)
   env:
     - name: NODE_ENV
       value: "production"
@@ -24,3 +35,4 @@ run:
       value: "postgres"
     - name: DB_PASSWORD
       value: DipCircuitlyPg2026!
+

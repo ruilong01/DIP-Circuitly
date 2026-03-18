@@ -268,6 +268,24 @@ app.use((req, res) => {
     res.sendFile(path.join(__dirname, '../docs/index.html'));
 });
 
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT}`);
+// Global error handler — returns 503 instead of crashing on DB pool exhaustion
+app.use((err, req, res, next) => {
+    if (err.code === 'ECONNREFUSED' || err.message?.includes('timeout') || err.message?.includes('pool')) {
+        console.error('DB pool error on request:', err.message);
+        return res.status(503).json({ success: false, error: 'Server is busy, please try again.' });
+    }
+    console.error('Unhandled server error:', err);
+    res.status(500).json({ success: false, error: 'Internal server error' });
 });
+
+// Keep server alive on unexpected errors — log but don't crash
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err.message);
+});
+process.on('unhandledRejection', (reason) => {
+    console.error('Unhandled Rejection:', reason);
+});
+
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT} (max ${process.env.DB_POOL_MAX || 20} DB connections per instance)`);
+});
