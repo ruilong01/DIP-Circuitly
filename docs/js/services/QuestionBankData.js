@@ -1,176 +1,217 @@
-window.QuestionBankData = `id,topicId,question,optionA,optionB,optionC,optionD,answer,image,explanation,difficulty
-101,1,"Find the number of nodes (n), branches (b), and loops (l) for the network in Figure below.","n=9, I=11, b=19","n=7, I=7, b=13","n=9, I=7, b=15","n=9, I=7, b=15",c,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsEasyQ1.png?raw=true,,1
-102,1,"Calculate the current going through the voltage source (a) when the switch is in position 1, and (b) when the switch is in position 2.","\\((a) 300\\,\\text{mA}, (b) 400\\,\\text{mA}\\)","\\((a) 800\\,\\text{mA}, (b) 300\\,\\text{mA}\\)","\\((a) 400\\,\\text{mA}, (b) 300\\,\\text{mA}\\)","\\((a) 400\\,\\text{mA}, (b) 300\\,\\text{mA}\\)",d,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsEasyQ2.png?raw=true,,1
-103,1,Determine the value of R in ohms. (Please round answer to 2 decimal places).,1.3,1.23,1.25,1.25,d,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsEasyQ3.png?raw=true,,1
-104,1,"According to \\,\\(\\Omega\\)'s Law, if the resistance in a circuit is doubled while the voltage remains constant, what happens to the current?",The current doubles.,The current remains the same.,The current is halved.,The current is halved.,c,,,1
-105,1,Kirchhoff’s Current Law (KCL) is a direct consequence of which fundamental physical principle?,Conservation of Energy,Conservation of Charge,Conservation of Momentum,Conservation of Charge,b,,,1
-106,1,"In any closed loop of a circuit, the algebraic sum of all voltages (potential differences) must be equal to:",Zero,The supply voltage,The sum of the resistances,Zero,a,,,1
-107,1,"Using the passive sign convention, if the calculated power P=VI for a specific component is negative, what does this indicate?",The component is consuming energy.,The component is supplying energy to the circuit.,The component is behaving as a short circuit.,The component is supplying energy to the circuit.,b,,,1
-108,1,A Thevenin equivalent circuit consists of which two elements?,A current source in parallel with a resistor.,A voltage source in series with a resistor.,A voltage source in parallel with a capacitor.,A voltage source in series with a resistor.,b,,,1
-109,1,The Superposition Principle can only be applied to circuits that are:,Non-linear,Linear,Purely inductive,Linear,b,,,1
-110,1,"How is the Norton resistance, \\(R_n\\) related to the Thevenin resistance, \\(R_{th}\\) for the same network?",\\(R_n is the reciprocal of R_{th}.\\),\\(R_n is the always double R_{th}.\\),\\(R_n is the equal to R_{th}.\\),\\(R_n is the equal to R_{th}.\\),c,,,1
-111,1,"For a DC circuit with a fixed source resistance \\(R_s\\), maximum power is delivered to a load \\(R_L\\) when:",\\(R_L = 0 (short circuit)\\),\\(R_L = infinity (open circuit)\\),\\(R_L = R_s\\),\\(R_L = R_s\\),c,,,1
-112,1,"Determine i1, i2, i3 in the circuit below.","i1=12, i2=0, i3=3","i1=13, i2=1, i3=2","i1=12, i2=0, i3=4","i1=12, i2=0, i3=3",a,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsAverageQ1.png?raw=true,,2
-113,1,"Find V1, V2, V3, V4 in the circuit below.","V1=8,V2=5,V3=2,V4=3","V1=-2,V2=-1,V3=-4,V4=9","V1=8,V2=5,V3=2,V4=4","V1=-2,V2=-1,V3=-4,V4=9",b,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsAverageQ2.png?raw=true,,2
-114,1,Determine V1 in the below circuit. (Please round answer to 2 decimal places).,25.85,25.32,26.18,26.18,c,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsAverageQ3.png?raw=true,,2
-115,1,Calculate V and 𝑖𝑥 in the circuit below.,"V=-4,ix=8","V=4,ix=-3.33","V=-4,ix=9","V=4,ix=-3.33",b,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsAverageQ4.png?raw=true,,2
-116,1,"Calculate v1, v2, and v3.","v1=-17,v2=5,v3=-9","v=-1,v2=-23,v3=9","v1=-17,v2=5,v3=-10","v=-1,v2=-23,v3=9",b,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsAverageQ5.png?raw=true,,2
-117,1,Find Vx in Volts. (Please round answer to 2 decimal places).,5.14,5.6,6.05,5.14,a,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsAverageQ6.png?raw=true,,2
-118,1,Find the equivalent resistance Req in the circuit below (in Ohms). (Please round answer to 2 decimal places).,75,81,83,83,d,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsAverageQ7.png?raw=true,,2
-119,1,Find the equivalent resistance Req in the circuit below (in Ohms). (Please round answer to 2 decimal places).,41.14,48.76,42.62,42.62,c,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsAverageQ8.png?raw=true,,2
-120,1,Calculate Vx in the circuit below.,10,11,12,10,a,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsAverageQ9.png?raw=true,,2
-121,1,Find the power associated with the 25k\\(\\Omega\\)  resistor (in kW). (Please round answer to 2 decimal places).,0.69,0.72,0.59,0.69,a,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsAverageQ10.png?raw=true,,2
-122,1,"In the below circuit, calculate vo (in volts). (Please round answer to 2 decimal places).",0,-1,1,0,a,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsAverageQ11.png?raw=true,,2
-123,1,Find the equivalent resistance between a and b terminals. (Please round answer to 2 decimal places).,23.33,24.26,24.25,24.25,c,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsAverageQ12.png?raw=true,,2
-124,1,"In the below circuit, determine Vo and the power absorbed by the dependent source.","V0 = -11.43, P = 574.7","V0 = -11.41, P = 574.8","V0 = -11.45, P = 575.01","V0 = -11.43, P = 574.7",a,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsChallengingQ1.png?raw=true,,3
-125,1,Find i1 to i4 in the below circuit.,"i1 = –6.07, i2 = –1.64, i3 = –7.51, i4 = –2.77","i1 = –5.17, i2 = –2.54, i3 = –6.51, i4 = –3.77","i1 = –6.17, i2 = –1.54, i3 = –7.71, i4 = –2.57","i1 = –6.17, i2 = –1.54, i3 = –7.71, i4 = –2.57",d,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsChallengingQ2.png?raw=true,,3
-126,1,Determine Vo and Io.,"Vo = 60.3 V, Io = 1.13 A","Vo = 52.4 V, Io = 0.67 A","Vo = 50 V, Io = 0 A","Vo = 50 V, Io = 0 A",d,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsChallengingQ3.png?raw=true,,3
-127,1,Calculate V and I in the circuit below.,"\\(V = 4.64\\,\\text{V}, I = 10.41\\,\\text{A}\\)","\\(V = 3.85\\,\\text{V}, I = 8.19\\,\\text{A}\\)","\\(V = 3.81\\,\\text{V}, I = 8.19\\,\\text{A}\\)","\\(V = 3.81\\,\\text{V}, I = 8.19\\,\\text{A}\\)",d,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsChallengingQ4.png?raw=true,,3
-128,1,Calculate the equivalent resistance between a and b terminals. All of the resistances are 60 \\(\\Omega\\) .,66.67,66.64,66.61,66.67,a,https://raw.github.com/DinYeo/DuolingoforCA/main/W1_BasicLawsChallengingQ5.png?raw=true,,3
-201,2,"Find Leq in the circuit below. Assume L = \\(10\\,\\text{mH}\\)",5,5.33,4.54,5,,https://raw.github.com/DinYeo/DuolingoforCA/main/W2_ESEEasyQ1.png?raw=true,,1
-202,2,"A circuit consisting of a DC voltage source, a resistor, and a capacitor has been connected for a very long time. In this steady-state condition, how does the capacitor behave in the circuit?",It acts as a short circuit,It acts as an open circuit.,It acts as a purely resistive element.,It acts as an open circuit.,,,,1
-203,2,"An inductor with an inductance of L = \\(4\\,\\text{mH}\\) has a steady current of I = \\(5\\,\\text{A}\\) flowing through it. What is the total energy stored in the inductor's magnetic field?","\\(10\\,\\text{mJ}\\)","\\(50\\,\\text{mJ}\\)","\\(100\\,\\text{mJ}\\)","\\(50\\,\\text{mJ}\\)",a,,,1
-204,2,A student connects two capacitors of 10microF in series. What is the equivalent capacitance of this combination?,20microF,10microF,5microF,5microF,b,,,1
-205,2,"A switch in a circuit containing an inductor is suddenly opened at t=0. Which of the following statements is true regarding the inductor's current, \\(i_L\\), the moment the switch is toggled?",The current immediately drops to zero.,The current reverses direction instantly.,The current cannot change instantaneously,The current cannot change instantaneously,b,,,1
-206,2,"The voltage across a parallel combination of \\(120\\,\\text{mF}\\) capacitor and a 15 \\(\\Omega\\)  resistor is 45\\(e^{-2000t}\\) V. Calculate the power which is absorbed by this parallel combination.",\\(-486000e^{-4000t}\\),\\(-486020e^{-4050t}\\),\\(-485865e^{-4000t}\\),\\(-485865e^{-4000t}\\),c,,,2
-207,2,"The current through a \\(1\\,\\text{F}\\) capacitor is 8(2-\\(e^{-t}\\)) A. Determine the voltage and power at t = 3s. Assume v(0)= 0.","V = 40.4, P = 630.31","V = 40.12, P = 630.32","V = 40.1, P = 630.31","V = 40.4, P = 630.31",c,,,2
-208,2,Find the equivalent capacitance for the circuit below. All capacitors are in \\(\\mu\\) F.,Ceq = 8.1,Ceq = 8.4,Ceq = 8.7,Ceq = 8.4,c,https://raw.github.com/DinYeo/DuolingoforCA/main/W2_ESEAverageQ3.png?raw=true,,2
-209,2,"An inductor has a linear change in current from 40 mA to 120 mA in 3 ms, and induces a voltage of 150 mV. Find the value of the inductor.",L = 5.526 mH,"\\(L = 5.265\\,\\text{mH}\\)",L = 5.625 mH,L = 5.625 mH,a,,,2
-210,2,"Determine the voltage and the energy stored in the \\(60 \\,\\(\\mu\\)\\text{F}\\) capacitor.","\\(V = 60.0\\,\\text{V}, W=108.0\\,\\text{mJ}\\)","\\(V = 60.5\\,\\text{V}, W=108.3\\,\\text{mJ}\\)","\\(V = 58.0\\,\\text{V}, W=108.0\\,\\text{mJ}\\)","\\(V = 60.0\\,\\text{V}, W=108.0\\,\\text{mJ}\\)",b,https://raw.github.com/DinYeo/DuolingoforCA/main/W2_ESEAverageQ5.png?raw=true,,2
-211,2,Find the equivalent inductance with respect to terminals a and b.,"\\(Leq = 9.2\\,\\text{H}\\)","\\(Leq = 9.3\\,\\text{H}\\)","\\(Leq = 9.1\\,\\text{H}\\)","\\(Leq = 9.2\\,\\text{H}\\)",c,https://raw.github.com/DinYeo/DuolingoforCA/main/W2_ESEAverageQ6.png?raw=true,,2
-212,2,"Two magnetically coupled coils have self-inductances of 20 mH and 80 mH, and the mutual inductance between them is 32 mH. Find (a) the coefficient of coupling, and (b) the largest value that M can have.","\\(K = 0.8555, M_{max} = 40.0\\,\\text{mH}\\)","\\(K = 0.8, M_{max} = 40.55\\,\\text{mH}\\)","\\(K = 0.8, M_{max} = 40.0\\,\\text{mH}\\)","\\(K = 0.8, M_{max} = 40.0\\,\\text{mH}\\)",a,,,2
-213,2,"The voltage across a 30 mF capacitor at t = 0 is 15 V, for t > 0 the current 6t mA flows through it. Calculate the voltage at 3 = 3s.","\\(V = 15.3\\,\\text{V}\\)","\\(V = 15.9\\,\\text{V}\\)","\\(V = 16.3\\,\\text{V}\\)","\\(V = 15.9\\,\\text{V}\\)",a,,,2
-214,2,"Find \\(i_L, V_c\\), and the energy stored in the capacitor and inductor in the below circuit.","\\(i_L\\) = \\(2.86\\,\\text{A}, V_c\\) = \\(0\\,\\text{V}, W_L\\) = \\(8.16\\,\\text{J}, W_C\\) = \\(0.5\\,\\text{J}\\)","\\(i_L\\) = \\(2.86\\,\\text{A}, V_c\\) = \\(0.3\\,\\text{V}, W_L\\) = \\(8.16\\,\\text{J}, W_C\\) = \\(0\\,\\text{J}\\)","\\(i_L\\) = \\(2.86\\,\\text{A}, V_c\\) = \\(0\\,\\text{V}, W_L\\) = \\(8.16\\,\\text{J}, W_C\\) = \\(0\\,\\text{J}\\)","\\(i_L\\) = \\(2.86\\,\\text{A}, V_c\\) = \\(0\\,\\text{V}, W_L\\) = \\(8.16\\,\\text{J}, W_C\\) = \\(0\\,\\text{J}\\)",c,https://raw.github.com/DinYeo/DuolingoforCA/main/W2_ESEAverageQ9.png?raw=true,,2
-215,2,"P = -0.207microW""","\\(i = -3.381\\,\\text{mA}, P = -0.270\\,\\mu\\text{W}\\)","\\(i = -3.339\\,\\text{mA}, P = -0.207\\,\\mu\\text{W}\\)","\\(i = -3.379\\,\\text{mA}, P = -0.267\\,\\mu\\text{W}\\)","\\(i = -3.381\\,\\text{mA}, P = -0.270\\,\\mu\\text{W}\\)",b,,,2
-216,2,"The current through a \\(15\\,\\text{mH}\\) inductor is 20\\(e^{-t/3}\\). Calculate the voltage and power at t = 4s.","\\(v = -26.359\\,\\text{mV}, P = -138.966\\,\\text{mW}\\)","\\(v = -27.359\\,\\text{mV}, P = -133.966\\,\\text{mW}\\)","\\(v = -26.359\\,\\text{mV}, P = -138.696\\,\\text{mW}\\)","\\(v = -26.359\\,\\text{mV}, P = -138.966\\,\\text{mW}\\)",d,,,2
-217,2,"The voltage across a \\(4\\,\\text{H}\\) inductor is 40(1-\\(e^{-4t}\\))V. Assume the initial current of the inductor is \\(0.5\\,\\text{A}\\), and find the energy stored in the inductor at t = 2s.","\\(W = 645.06\\,\\text{J}\\)","\\(W = 648.06\\,\\text{J}\\)","\\(W = 682.06\\,\\text{J}\\)","\\(W = 648.06\\,\\text{J}\\)",a,,,2
-501,5,What is the Laplace transform of a time-domain signal f(t)?,Picture,Picture,Picture,Picture,a,,,1
-502,5,What is the Laplace transform of u(t)u(t)u(t)?,A. s,,c. 1/s,c. 1/s,b,,,1
-503,5,Which of the following correctly represents a capacitor in the s-domain (zero initial voltage)?,A. sC,B. 1/C,C.1/sC,C.1/sC,,,,1
-504,5,"In DC steady state, a capacitor behaves as an open circuit.",TRUE,FALSE,,TRUE,,(It behaves as a short circuit),,1
-505,5,Initial conditions in Laplace analysis appear as independent sources in the s-domain.,TRUE,FALSE,,TRUE,,,,1
-506,5,what is the S domain for the following components? ,u(t),capacitor,inductor,u(t),,1/sC=3/s,,2
-507,5,mesh 1(left side): fill in the blank: (a)I1(s)+(b)I2(s)=(c),,,,,,,,2
-508,5,mesh 2(right side): fill in the blank:(d)I1(s)+(e)I2(s)=(f),d=(?),e=(?),f=(?),d=(?),,5+s+3/s,,2
-509,5,calculateV0(s),,,,,,,,2
-510,5,calculateV0(t),,,,,,,,2
-511,5,"                                                                                   enter the vsalues for A,B,C,D",A=0.357,B=0.5,C=-0.357,A=0.357,,,,2
-512,5,Determine io(t) across the 2H inductor for t>0 in the network below by applying Laplace transforms.,,,,,,,,2
-401,4,Which of the following is NOT a standard assumption for an ideal operational amplifier?,Infinite open-loop voltage gain,Zero input offset voltage and current,Infinite output impedance,Infinite output impedance,,,,2
-402,4,"In an ideal op amp, what is the voltage difference between the inverting and non-inverting inputs when negative feedback is applied?",Equal to supply voltage,Zero,Depends on the input signal,Zero,,,,2
-403,4,What is the configuration of the op-amp shown in the figure?,Non-inverting amplifier,Differential amplifier,Inverting amplifier,Inverting amplifier,C,https://github.com/raphuniy1s1/Circuit_Analysis/blob/main/Inv.png?raw=true,,2
-404,4,Which op amp configuration provides a positive gain without inverting the input signal?,Non-inverting amplifier,Differential amplifier,Inverting amplifier,Non-inverting amplifier,C,,,2
-405,4,What is the configuration of the op-amp shown in the figure?,Differential amplifier,Non-inverting amplifier,Inverting amplifier,Non-inverting amplifier,C,https://github.com/raphuniy1s1/Circuit_Analysis/blob/main/NonInv.png?raw=true,,2
-406,4,Which component is essential for setting the gain in an inverting op amp configuration?,Capacitor,Diode,Resistor,Resistor,B,,,2
-407,4,What happens if the op amp is used without feedback?,It acts as comparator,It amplifies with controlled gain,It becomes a voltage follower,It acts as comparator,3/s,,,2
-408,4,What is the main purpose of negative feedback in op amp circuits?,Eliminate output voltage,Increase open-loop gain,Stabilize and control closed-loop gain,Stabilize and control closed-loop gain,1/(s+5),,,2
-409,4,An op-amp is best modeled as which type of dependent source?,Current-controlled current source,Voltage-controlled current source,Voltage-controlled voltage source,Voltage-controlled voltage source,s/(s^2+16),,,2
-410,4,Why is the output impedance of an ideal op-amp assumed to be zero?,To prevent input terminals from drawing current,Op-amp cannot deliver any current to the load,To ensure output voltage is unaffected by the connected load,To ensure output voltage is unaffected by the connected load,Picture,,,2
-411,4,"Among the many uses of operational amplifiers, which of the following represents a valid application",To generate digital clock pulse,To amplify voltage signals,To store electrical charge like a capacitor,To amplify voltage signals,FALSE ,,,2
-412,4,What is the output voltage Vo in terms of Vi?,1-Vi,Vi,0,Vi,TRUE,https://github.com/raphuniy1s1/Circuit_Analysis/blob/main/Follower.jpg?raw=true,,2
-413,4,"If input voltage is 0, what is the output voltage?","\\(0\\,\\text{V}\\)","\\(1\\,\\text{V}\\)","\\(2\\,\\text{V}\\)","\\(0\\,\\text{V}\\)",,https://github.com/raphuniy1s1/Circuit_Analysis/blob/main/Input.png?raw=true,,2
-414,4,Find the output voltage V3.,-1,-3,-6,-6,1/S,https://github.com/raphuniy1s1/Circuit_Analysis/blob/main/Output.png?raw=true,,2
-415,4,Find the output voltage Vout.,9,10,12,12,,https://github.com/raphuniy1s1/Circuit_Analysis/blob/main/Output2.png?raw=true,,2
-416,4,Find the current flowing through R3.,"\\(1\\,\\text{A}\\)","\\(2\\,\\text{A}\\)","\\(3\\,\\text{A}\\)","\\(1\\,\\text{A}\\)",1+3/s,https://github.com/raphuniy1s1/Circuit_Analysis/blob/main/Output3.png?raw=true,,2
-417,4,What is the voltage at point A?,(V1/R1)*R2,(-V1/R1)*R2,V1,(-V1/R1)*R2,-3/s,https://github.com/raphuniy1s1/Circuit_Analysis/blob/main/Output4.png?raw=true,,2
-418,4,What is the current flowing through R3 from the ground?,(-V1/R1)*R2/R3,(V1/R1)*R2/R3,V2/R1,(-V1/R1)*R2/R3,Picture,https://github.com/raphuniy1s1/Circuit_Analysis/blob/main/Output4.png?raw=true,,2
-419,4,What is the expression of \\(V_{out}\\) in terms of \\(V_{in}\\)?,\\((R2/R1)*V_{in}\\),\\((R1/R2)*V_{in}\\),\\((1+R2/R1)*V_{in}\\),\\((1+R2/R1)*V_{in}\\),,https://github.com/raphuniy1s1/Circuit_Analysis/blob/main/NonInv.png?raw=true,,2
-420,4,What is the expression of \\(V_{out}\\) in terms of \\(V_{in}\\)?,\\((-R2/R1)*V_{in}\\),\\((-R1/R2)*V_{in}\\),\\((R2/R1)*V_{in}\\),Picture,c,https://github.com/raphuniy1s1/Circuit_Analysis/blob/main/Inv.png?raw=true,,2
-301,3,"A series RC circuit has R=10 k\\(\\Omega\\) R=\\(10\\,\\text{k}\\)\\OmegaR=10k\\(\\Omega\\)  and C=\\(10 \\,\\(\\mu\\)\\text{F}\\)C=\\(10\\,\\(\\mu\\)\\text{F}\\)C=\\(10\\,\\(\\mu\\)\\text{F}\\). A DC source is connected at t=0t=0t=0. What is the time constant?",0.01 s,0.1 s,1 s,0.1 s,,,,2
-302,3,"In an RC circuit, vC(0−)=5 V\\(v_C\\)(0^-)=\\(5\\,\\text{V}\\)vC​(0−)=\\(5\\,\\text{V}\\). What is vC(0+)\\(v_C\\)(0^+)vC​(0+)?",0 V,2.5 V,5 V,Picture,B,,,2
-303,3,"For a charging RC circuit with a DC source, vC(t)\\(v_C\\)(t)vC​(t) will:",Increase linearly,Increase exponentially,Oscillate,Picture,B,,,2
-304,3,"An RL circuit has R=5 \\(\\Omega\\) R=\\(5\\,\\(\\Omega\\)\\)R=5\\(\\Omega\\) , L=2 HL=\\(2\\,\\text{H}\\)L=\\(2\\,\\text{H}\\). What is the time constant?",0.1 s,0.4 s,2.5 s,0.4 s,D,,,2
-305,3,Which statement is always true for an ideal inductor?,Voltage is continuous,Current is continuous,Power is continuous,Current is continuous,B,,,2
-306,3,"In an RL circuit switched at t=0t=0t=0, iL(0+)\\(i_L\\)(0^+)iL​(0+) is:",Steady-state value,Infinite,\\(Equal to iL(0−)i_L(0^-)iL​(0−)\\),\\(Equal to iL(0−)i_L(0^-)iL​(0−)\\),C,,,2
-307,3,A series RLC circuit is underdamped when:,\\(R2>4L/CR^2>4L/CR2>4L/C\\),\\(R2=4L/CR^2=4L/CR2=4L/C\\),\\(R2<4L/CR^2<4L/CR2<4L/C\\),\\(R2<4L/CR^2<4L/CR2<4L/C\\),A,,,2
-308,3,The natural response of a circuit is due to:,External sources,Initial stored energy,AC excitation,Initial stored energy,B,,,2
-309,3,Which is required for a second-order transient response?,One resistor,One capacitor,One inductor and one capacitor,One inductor and one capacitor,C,,,2
-310,3,A transient response is usually negligible after about:,1τ1\\tau1τ,2τ2\\tau2τ,5τ5\\tau5τ,5τ5\\tau5τ,A,,,2
-311,3,"In sinusoidal steady-state analysis, all voltages and currents:",Are constant,Grow exponentially,Have the source frequency,Have the source frequency,C,,,2
-312,3,\\(The phasor of v(t)=10cos⁡(100t+30∘)v(t)=10\\cos(100t+30^\\circ)v(t)=10cos(100t+30∘) is:\\),\\(10∠30∘10∠30^\\circ10∠30∘\\),\\(10∠−30∘10∠-30^\\circ10∠−30∘\\),\\(5∠30∘5∠30^\\circ5∠30∘\\),\\(10∠30∘10∠30^\\circ10∠30∘\\),D,,,2
-313,3,The impedance of a capacitor is:,\\(j\\Omega Cj\\omega Cj\\Omega C\\),\\(1/(j\\Omega C)1/(j\\omega C)1/(j\\Omega C)\\),\\(\\Omega C\\omega C\\Omega C\\),\\(1/(j\\Omega C)1/(j\\omega C)1/(j\\Omega C)\\),C,,,2
-314,3,The impedance of an inductor is:,\\(1/(j\\Omega L)1/(j\\omega L)1/(j\\Omega L)\\),\\(\\Omega L\\omega L\\Omega L\\),\\(j\\Omega Lj\\omega Lj\\Omega L\\),\\(j\\Omega Lj\\omega Lj\\Omega L\\),B,,,2
-315,3,"In a purely capacitive circuit, current:",Lags voltage by 90°,Leads voltage by 90°,Is in phase,Leads voltage by 90°,B,,,2
-316,3,The average power consumed by a pure inductor is:,Maximum,Reactive only,Zero,Zero,A,,,2
-317,3,Power factor is defined as:,Q/SQ/SQ/S,\\(cos⁡\\theta \\cos\\thetacos\\theta\\),Vrms/IrmsV_{rms}/I_{rms}Vrms​/Irms​,\\(cos⁡\\theta \\cos\\thetacos\\theta\\),C,,,2
-318,3,Frequency response analysis studies circuit behavior as:,Time varies,Resistance varies,Frequency varies,Frequency varies,D,,,2
-319,3,"In an RC low-pass filter, output is taken across the:",Resistor,Capacitor,Source,Capacitor,A,,,2
-320,3,The total response of a linear circuit equals the sum of:,DC and AC,Input and output,Transient and steady-state,Transient and steady-state,B,,,2
-601,6,A transfer function H(s) is defined as:,Vin(s) / Vout(s),"Y(s) / X(s) , where Y is o/p, X is i/p",I(s) / V(s) ,"Y(s) / X(s) , where Y is o/p, X is i/p",A,,,2
-602,6,"If a pole lies in the Open Left Half Plane, the response is",Exponentially Decaying Sinusoid,Exponential Decay,Exponentially Growing Sinusoid,Exponential Decay,C,,,2
-603,6,"For a simple RC circuit, if Vin(s) is applied to a series R and C (output across C) the transfer function H(s) = Vc(s) / Vin(s) is:",1 / ( sRC + 1),sRC / (sRC + 1),R / (sRC + 1),1 / ( sRC + 1),A,,,2
-604,6,"In a two-port network, the transfer admittance Y21(s) is defined as:",V2(s) / I1(s) with V2 = 0,I2(s) / V2(s) with V2 = 0,V1(s) / I2(s) with I1 = 0,I2(s) / V2(s) with V2 = 0,B,,,2
-605,6,Which stable output responses y(t) is critically damped?,"All poles of Y(s) are real, negative and distinct.",All poles of Y(s) lie in the open LHP with at least 1 pair of complex conjugate poles,All the poles of Y(s) are real negative with at least 2 same poles,All the poles of Y(s) are real negative with at least 2 same poles,C,,,2
-606,6,"Given H(s) = (s + 5) / (s^2 + 3s + 2), the finite poles are at:",s = -5,"s = -1, -2",s= -3,"s = -1, -2",B,,,2
-607,6,A network function H(s) =                                          10(s + 2) / s(s + 1)(s + 3)^2,"Double pole at s = -3, zero at s = -2","Double zero at s = -3, pole at s = -2","Poles at s= 0, -1, -3","Double pole at s = -3, zero at s = -2",B,,,2
-608,6,"An active network has H(s) = -a / RCs + 1 - a. For stability, we require:",a > 1,a < 1,a = 1,a < 1,B,,,2
-609,6,"For a series RLC circuit with R = 4ꭥ, L =1H, C = 0.25F, the transfer function Vc(s) / Vin(s) is:",\\(1 / s^2 +4s + 4\\),\\(4 / s^2 +4s + 4\\),\\(1 / s^2 +4s + 1\\),\\(1 / s^2 +4s + 4\\),C,,,2
-610,6,"For a low-pass RC filter (R = 1kꭥ, C = 1uF), the transfer function H(s) = Vo(s)/Vi(S) is:",1 / (1 + s),1 / (1 + sRC),1 / (1 + 0.001s),1 / (1 + 0.001s),C,,,2
-611,6,"If H(s) has a pole at s = 0 and all others in LHP, and input x(t) = sin(wt)u(t) is applied, the steady-state response will:",Grow linearly with time,Be sinusoidal with constant amplitude,Decay to zero,Be sinusoidal with constant amplitude,B,,,2
-612,6,Which of the following defines the port condition for a two-port network?,V1 = V2 ,The current entering one terminal of a port equals the current leaving the other terminal of the same port,No voltage difference between ports,The current entering one terminal of a port equals the current leaving the other terminal of the same port,C,,,2
-613,6,"For the admittance parameters (y), y21 is defined as:","I2 / V1 , V2 = 0","I1 / V2 , V1 = 0","V2 / I1 , I2 = 0","I2 / V1 , V2 = 0",D,,,2
-614,6,"For a reciprocal two-port network containing only R,L,C and transformer (no dependent sources), which is always true?",z12 = z21,h12 = h21,AD - BC = 0,z12 = z21,C,,,2
-615,6,Two-ports are connected in cascade. Which parameter set is most convenient to find overall parameters?,z-parameters,y-parameters,ABCD-parameters,ABCD-parameters,A,,,2
-616,6,A two-port network is symmetrical if: ,z11 = z22,z12 = z21,y12 = -y21,z11 = z22,B,,,2
-617,6,"If the z-parameter matrix is [4,2 ; 2,5], the y-parameter matrix is:","[5/16, -2/16; -2/16, 4/16]","[4, -2; -2, 5]","[0.3125, -0.125; -0.125, 0.25]","[0.3125, -0.125; -0.125, 0.25]",C,,,2
-618,6,"For a reciprocal network, the condition in terms of hybrid parameters is:",h12 = h21,h12 = -h21,h11 = h22,h12 = -h21,B,,,2
-619,6,"When 2 two-port are connected in parallel, the overall y-parameter matrix is:",Sum of individual y-matrices,Product of individual y-matrices,Inverse of the sum of z-matrices,Sum of individual y-matrices,C,,,2
-620,6,The ABCD parameter B is defined as:,"V1 / V2 , I2 = 0","V1 / -I2 , V2 = 0","I1 / V2 , I2 = 0","V1 / -I2 , V2 = 0",B,,,2
-701,7,In the context of frequency domain analysis what is the angular frequency (\\(\\Omega\\) ) of a standard DC voltage source?,20 rad/s,60 rad/s,0 rad/s,0 rad/s,C,,,2
-702,7,Which of the following correctly compares the behavior of an ideal Capacitor in DC steady state versus AC steady state?,DC: Short Circuit AC: Open Circuit,DC: Open Circuit AC: Frequency-dependent Impedance (1/j\\(\\Omega\\) C),DC: Resistor AC: Short Circuit,DC: Open Circuit AC: Frequency-dependent Impedance (1/j\\(\\Omega\\) C),B,,,2
-703,7,"A resistor R=10 \\,\\(\\Omega\\) is used in a circuit. How does its impedance change if the source switches from DC to high-frequency AC?",It increases linearly with frequency,It decreases with frequency,"\\(It remains constant at 10 \\,\\Omega\\)","\\(It remains constant at 10 \\,\\Omega\\)",C,,,2
-704,7,Calculate the reactance (XL) of a 5 H inductor when connected to a DC voltage source.,"\\(5 \\,\\Omega\\)","\\(0 \\,\\Omega\\)",Infinite,"\\(0 \\,\\Omega\\)",,,,1
-705,7,"Calculate the reactance (XL) of the same \\(5\\,\\text{H}\\) inductor when connected to an AC source with \\(\\Omega\\)  = 10 rad/s.","\\(50 \\,\\Omega\\)","\\(0.5 \\,\\Omega\\)","\\(5 \\,\\Omega\\)","\\(50 \\,\\Omega\\)",,,,2
-706,7,"Which of the following correctly describes the ""Effective Value"" (RMS) of an AC current?",It is the peak value divided by 2,It is the average value over half a cycle,It is the equivalent DC current that delivers the same average power to a resistor,It is the equivalent DC current that delivers the same average power to a resistor,,,,2
-707,7,Determine the RMS value of a sinusoidal voltage v(t) with a peak amplitude of 100 V.,100 V,141.4 V,70.7 V,70.7 V,,,,1
-708,7,What is the RMS value of a steady DC voltage v(t) = 10 V?,0 V,10 V,7.07 V,10 V,,,,2
-709,7,Why can we NOT use Phasors to solve a circuit that has both DC and AC sources simultaneously in a single step?,Phasors are frequency-specific; DC and AC have different frequencies,Phasors only work for resistors,DC sources cannot be represented in math,Phasors are frequency-specific; DC and AC have different frequencies,,,,1
-710,7,"In a Series RC circuit, if the frequency of the source omega increases from 0 (DC) to Infinity, what happens to the magnitude of the total impedance |Z|?",It increases,It decreases,It stays constant,It decreases,,,,2
-711,7,A current is given by i(t) = 5 cos(377t). What is the frequency f in Hertz?,50 Hz,60 Hz,377 Hz,60 Hz,,,,1
-712,7,"A voltage source v(t) = 12 + 10 cos(2t) V is connected to a Series RL circuit (R=4, L=2). Calculate the DC component of the resulting current.",3.0 A,12.0 A,"\\(12.0\\,\\text{A}\\)",3.0 A,,,,2
-713,7,"For the same circuit (R=4, L=2) and input v(t) = 12 + 10 cos(2t), calculate the AC component of the current in phasor form.",\\(2.5 \\angle 0^\\circ A\\),\\(1.77 \\angle -45^\\circ A\\),\\(1.77 \\angle 45^\\circ A\\),\\(1.77 \\angle -45^\\circ A\\),,,,2
-714,7,Calculate the Total RMS value of the mixed current signal i(t) = 3 + 4 cos(t) A.,5.0 A,3.5 A,4.12 A,4.12 A,,,,3
-715,7,"A resistor R=5 \\,\\(\\Omega\\) is fed by a current i(t) = 2 + 5 cos(10t) A. Calculate the Total Average Power absorbed.",45 W,82.5 W,145 W,82.5 W,,,,3
-716,7,"Find the total energy W dissipated by a 10 \\,\\(\\Omega\\) resistor over 1 second if the current is i(t) = \\(5\\,\\text{A}\\) (DC).",25 J,50 J,250 J,250 J,,,,1
-717,7,"A source v(t) = 20 + 20 cos(100t) is applied across a Capacitor C=\\(1\\,\\text{mF}\\). What is the steady-state current i(t)?",20 mA,0:00,-2 sin(100t) A,-2 sin(100t) A,,,,1
-718,7,"Two voltage sources are in series: v1(t)=\\(10\\,\\text{V}\\) (DC) and v2(t)=10cos(t) V (AC). If measured by a standard DC Voltmeter, what will the reading be?",0 V,10 V,17.07 V,10 V,B,,,2
-719,7,"For a signal v(t) = Vm cos(\\(\\Omega\\) t), what is the ratio of the Maximum Instantaneous Power to the Average Power absorbed by a resistor?",1,1.414,2,2,B,,,3
-720,7,Why is the current written as i(t)= \\(I_{DC}\\) + \\(I_{AC}\\) cos(\\(\\Omega\\) t+\\(\\phi\\) )?,Because resistors require two currents,Because capacitors only respond to AC,Because DC and AC sources affect the circuit independently,Because DC and AC sources affect the circuit independently,A,,,1
-,,,,,,,B,,,
-,,,,,,,C,,,
-,,,,,,,B,,,
-,,,,,,,A,,,
-,,,,,,,B,,,
-,,,,,,,A,,,
-,,,,,,,C,,,
-,,,,,,,B,,,
-,,,,,,,B,,,
-,,,,,,,A,,,
-,,,,,,,A,,,
-,,,,,,,D,,,
-,,,,,,,A,,,
-,,,,,,,C,,,
-,,,,,,,B,,,
-,,,,,,,A,,,
-,,,,,,,B,,,
-,,,,,,,C,,,
-,,,,,,,B,,,
-,,,,,,,C,,,
-,,,,,,,B,,,
-,,,,,,,A,,,
-,,,,,,,C,,,
-,,,,,,,C,,,
-,,,,,,,B,,,
-,,,,,,,A,,,
-,,,,,,,B,,,
-,,,,,,,B,,,
-,,,,,,,A,,,
-,,,,,,,B,,,
-,,,,,,,C,,,
-,,,,,,,B,,,
-,,,,,,,C,,,
-,,,,,,,C,,,
-,,,,,,,B,,,
-,,,,,,,C,,,
-,,,,,,,D,,,
+window.QuestionBankData = `id,topicId,difficulty,question,optionA,optionB,optionC,answer,explanation
+101,1,1,"Kirchhoff's Current Law (KCL) is based on conservation of:","Energy","Charge","Mass","Charge","Charge cannot be accumulated at a node."
+102,1,1,"Kirchhoff's Voltage Law (KVL) is based on conservation of:","Energy","Charge","Power","Energy","Sum of voltage drops/rises in a loop is zero (work done is zero)."
+103,1,1,"Ohm's Law states relation between:","V, I, P","V, I, R","P, I, R","V, I, R","V = IR."
+104,1,1,"Unit of Resistance is:","Siemens","Ohm","Henry","Ohm","Standard unit."
+105,1,1,"Unit of Conductance is:","Ohm","Siemens","Farad","Siemens","Reciprocal of Ohm."
+106,1,1,"Reciprocal of Resistance is:","Inductance","Conductance","Reactance","Conductance","G = 1/R."
+107,1,1,"Ideal voltage source has internal resistance of:","Zero","Infinite","1 Ohm","Zero","Maintains voltage regardless of current."
+108,1,1,"Ideal current source has internal resistance of:","Zero","Infinite","1 MegaOhm","Infinite","Maintains current regardless of voltage."
+109,1,1,"Nodes are points where:","Two or more elements meet","Only two elements meet","Ground exists","Two or more elements meet","Definition of a node."
+110,1,1,"A loop is:","Any open path","Any closed path","A specific mesh","Any closed path","Starting and ending at the same node."
+111,1,1,"A mesh is a loop that:","Contains no other loops","Contains at least one loop","Is very large","Contains no other loops","Property of planar circuits."
+112,1,1,"Thevenin's Theorem reduces a linear circuit to:","Vth in parallel with Rth","Vth in series with Rth","Ith in series with Rth","Vth in series with Rth","Standard Thevenin equivalent."
+113,1,1,"Norton's Theorem reduces a linear circuit to:","In in series with Rn","In in parallel with Rn","Vn in parallel with Rn","In in parallel with Rn","Standard Norton equivalent."
+114,1,1,"Thevenin Resistance Rth is found by:","Shorting voltage sources, opening current sources","Opening voltage sources, shorting current sources","Leaving sources on","Shorting voltage sources, opening current sources","Deactivating independent sources."
+115,1,1,"Superposition Theorem applies to:","Power","Voltage and Current","Non-linear elements","Voltage and Current","Linear responses only. Power is quadratic (non-linear)."
+116,1,1,"Maximum Power Transfer occurs when Load R equals:","Zero","Source R","Infinite","Source R","Impedance matching condition."
+117,1,1,"Efficiency at Maximum Power Transfer is:","100%","50%","75%","50%","Half power dissipated in source, half in load."
+118,1,1,"Source transformation converts V-source to:","I-source in series with R","I-source in parallel with R","V-source in parallel with R","I-source in parallel with R","V=IR relation holds."
+119,1,1,"Two resistors in series have same:","Voltage","Check","Current","Current","Single path for charge flow."
+120,1,1,"Two resistors in parallel have same:","Current","Voltage","Power","Voltage","Connected to same two nodes."
+121,1,1,"Formula for two resistors R1, R2 in parallel:","R1+R2","(R1*R2)/(R1+R2)","1/R1 + 1/R2","(R1*R2)/(R1+R2)","Product over sum."
+122,1,1,"Voltage Division Rule applies to elements in:","Series","Parallel","Mesh","Series","Divides source voltage proportional to resistance."
+123,1,1,"Current Division Rule applies to elements in:","Series","Parallel","Loop","Parallel","Divides source current inversely proportional to resistance."
+124,1,1,"Power is defined as product of:","V and R","V and I","I and R","V and I","P = VI."
+125,1,1,"Resistors dissipate energy as:","Magnetic field","Heat","Electric field","Heat","Lossy component."
+126,1,1,"Linearity requires:","Additivity and Homogeneity","Stability","Causality","Additivity and Homogeneity","Mathematical definition of linear system."
+127,1,1,"Nodal Analysis uses:","KCL","KVL","Ohm's Law only","KCL","Sum of currents at node is zero."
+128,1,1,"Mesh Analysis uses:","KCL","KVL","Power Balance","KVL","Sum of voltages in loop is zero."
+129,1,1,"A Supernode is formed when:","Current source is between non-reference nodes","Voltage source is between non-reference nodes","Resistor is large","Voltage source is between non-reference nodes","Simplifies nodal analysis."
+130,1,1,"A Supermesh is formed when:","Current source is shared by two meshes","Voltage source is shared","No source is shared","Current source is shared by two meshes","Simplifies mesh analysis."
+131,1,1,"Conductance G equals:","R","1/R","R^2","1/R","Inverse of resistance."
+132,1,1,"Power absorbed by resistor:","I^2 * R","I^2 / R","V * R","I^2 * R","Joule's Law."
+133,1,1,"Dependent sources are controlled by:","Time","Another voltage or current","Temperature","Another voltage or current","VCVS, VCCS, CCVS, CCCS."
+134,1,1,"Active elements:","Dissipate energy","Generate energy","Store energy","Generate energy","Sources, Op-Amps (with supply)."
+135,1,1,"Passive elements:","Cannot generate net energy","Have negative resistance","Are voltage sources","Cannot generate net energy","R, L, C."
+136,1,1,"Short circuit implies:","R=0, V=0","R=inf, I=0","R=0, I=0","R=0, V=0","Zero resistance path."
+137,1,1,"Open circuit implies:","R=0, V=0","R=inf, I=0","R=inf, V=0","R=inf, I=0","No current can flow."
+138,1,1,"Ground reference has voltage:","5V","0V","Infinity","0V","Reference point."
+139,1,1,"Millman's Theorem is useful for:","Parallel voltage sources","Series voltage sources","Series current sources","Parallel voltage sources","Finds common voltage across parallel branches."
+140,1,1,"Tellegen's Theorem relates to:","Power conservation","Voltage division","Current division","Power conservation","Sum of power is zero in any circuit."
+141,1,1,"Dual of Voltage is:","Current","Charge","Flux","Current","Duality principle."
+142,1,1,"Dual of Resistance is:","Inductance","Conductance","Capacitance","Conductance","R <-> G."
+143,1,1,"Instantaneous Power p(t) is:","v(t) * i(t)","Vrms * Irms","Vdc * Idc","v(t) * i(t)","Time domain product."
+144,1,1,"Unit of Charge is:","Ampere","Coulomb","Volt","Coulomb","Standard unit."
+145,1,1,"Unit of Energy is:","Watt","Joule","Newton","Joule","Standard unit."
+146,1,1,"Electron flow is opposite to:","Conventional current","Voltage","Power","Conventional current","Historical definition."
+147,1,1,"Specific resistance depends on:","Length","Material","Area","Material","Resistivity is a material property."
+148,1,1,"Conductivity is inverse of:","Resistance","Resistivity","Conductance","Resistivity","Sigma = 1 / Rho."
+149,1,1,"Temperature coefficient of copper is:","Positive","Negative","Zero","Positive","R increases with T."
+150,1,1,"Resistance of a wire is proportional to:","Area","Length","Volume","Length","R = Rho * L / A."
+1001,1,2,"A 10V source is connected to a 5 Ohm resistor. What is the current?","2A","50A","0.5A","2A","I = V/R = 10/5 = 2A."
+1002,1,2,"Three 9 Ohm resistors are connected in parallel. Total resistance is:","27 Ohm","3 Ohm","1 Ohm","3 Ohm","Rp = R/n = 9/3 = 3 Ohm."
+1003,1,3,"A circuit has Vth=12V and Rth=4 Ohm. What is the maximum power transfer to a load?","3W","9W","36W","9W","Pmax = Vth^2 / (4*Rth) = 144 / 16 = 9W."
+1004,1,3,"Calculated voltage across a 6 Ohm resistor when 2A flows through it and it's in series with 4V source?","12V","16V","8V","12V","Vr = I*R = 2 * 6 = 12V. (Voltage source doesn't change resistor voltage drop)."
+1005,1,2,"A bulb is rated 100W at 200V. Its resistance is:","2 Ohm","400 Ohm","20 Ohm","400 Ohm","R = V^2 / P = 40000 / 100 = 400 Ohm."
+1101,1,3,"Three resistors (12Ω, 6Ω, 4Ω) are in parallel. What is the total resistance?","2Ω","22Ω","8Ω","2Ω","1/Rp = 1/12 + 1/6 + 1/4 = (1+2+3)/12 = 6/12; Rp = 2Ω."
+1102,1,3,"A 10V source is in series with R1=2Ω and R2=8Ω. What is the voltage across R2?","8V","2V","10V","8V","V2 = Vs * R2 / (R1+R2) = 10 * 8 / 10 = 8V."
+1103,1,3,"What is the power dissipated by a 5Ω resistor carrying a current of 2A?","20W","10W","50W","20W","P = I^2 * R = 2^2 * 5 = 4 * 5 = 20W."
+201,2,1,"Capacitor stores energy in:","Electric field","Magnetic field","Heat","Electric field","Between plates."
+202,2,1,"Inductor stores energy in:","Electric field","Magnetic field","Chemical bonds","Magnetic field","Flux lines."
+203,2,1,"Unit of Capacitance:","Henry","Farad","Ohm","Farad","F."
+204,2,1,"Unit of Inductance:","Henry","Farad","Weber","Henry","H."
+205,2,1,"Voltage across capacitor cannot change:","Slowly","Instantly","At all","Instantly","Requires infinite current."
+206,2,1,"Current through inductor cannot change:","Slowly","Instantly","Linearly","Instantly","Requires infinite voltage."
+207,2,1,"IV relation for Capacitor:","i = C dv/dt","v = C di/dt","v = iR","i = C dv/dt","Derivative of voltage."
+208,2,1,"IV relation for Inductor:","v = L di/dt","i = L dv/dt","v = Li","v = L di/dt","Derivative of current."
+209,2,1,"Capacitors in parallel combine:","Additively (C1+C2)","Inversely (1/C)","Like resistors","Additively (C1+C2)","Increases plate area."
+210,2,1,"Inductors in series combine:","Additively (L1+L2)","Inversely","Like capacitors","Additively (L1+L2)","Like resistors."
+211,2,1,"DC steady state behavior of Capacitor:","Short Circuit","Open Circuit","Resistor","Open Circuit","dv/dt = 0 -> i = 0."
+212,2,1,"DC steady state behavior of Inductor:","Short Circuit","Open Circuit","Source","Short Circuit","di/dt = 0 -> v = 0."
+213,2,1,"Time constant of RC circuit:","L/R","RC","1/RC","RC","Seconds."
+214,2,1,"Time constant of RL circuit:","L/R","RL","R/L","L/R","Seconds."
+215,2,1,"Energy in Capacitor:","1/2 CV^2","1/2 LI^2","CV","1/2 CV^2"," Joules."
+216,2,1,"Energy in Inductor:","1/2 CV^2","1/2 LI^2","LI","1/2 LI^2","Joules."
+217,2,1,"Ideal Capacitor dissipates:","0 Watts","Infinite Watts","Heat","0 Watts","Stores energy, doesn't burn it."
+218,2,1,"Ideal Inductor dissipates:","0 Watts","I^2 R","Heat","0 Watts","Stores energy only."
+219,2,1,"Mutual Inductance M exists between:","Capacitors","Coupled Inductors","Resistors","Coupled Inductors","Transformers."
+220,2,1,"Coefficient of Coupling k is between:","0 and 1","-1 and 1","1 and 100","0 and 1","Fraction of flux linkage."
+2001,2,2,"A 100uF capacitor is charged to 10V. Stored energy is:","5mJ","1mJ","10mJ","5mJ","E = 0.5 * C * V^2 = 0.5 * 100e-6 * 100 = 5e-3 J."
+2002,2,2,"In a 2H inductor, current increases from 0 to 2A in 1s. Avg induced voltage is:","4V","2V","1V","4V","V = L * deltaI / deltaT = 2 * 2 / 1 = 4V."
+2003,2,3,"Calculated time constant for a 47k Ohm resistor and 10uF capacitor:","0.47s","4.7s","47s","0.47s","tau = RC = 47000 * 10e-6 = 0.47s."
+2101,2,3,"Two 10uF capacitors are in series. What is the equivalent capacitance?","5uF","20uF","10uF","5uF","Cs = (C1*C2)/(C1+C2) = 100/20 = 5uF."
+2102,2,3,"An RC circuit has R=10kΩ and C=100uF. What is the time constant?","1.0s","0.1s","10s","1.0s","tau = RC = 10,000 * 100e-6 = 1s."
+2103,2,3,"Calculate the resonant frequency of a circuit with L=1H and C=1uF (in rad/s).","1000 rad/s","1 rad/s","100 rad/s","1000 rad/s","w0 = 1/sqrt(LC) = 1/sqrt(1e-6) = 1000 rad/s."
+301,3,1,"Transient response is due to:","Resistors","Energy storage elements","Sources","Energy storage elements","L and C cannot change state instantly."
+302,3,1,"Steady state implies:","t = 0","t -> infinity","t = tau","t -> infinity","Responses have settled."
+303,3,1,"Time constant tau for RC:","RC","R/C","1/RC","RC","Seconds."
+304,3,1,"Time constant tau for RL:","L/R","R/L","RL","L/R","Seconds."
+3011,3,2,"Inductor L=2H is carrying 5A. It is suddenly shorted. Time constant with 10 Ohm series internal R?","0.2s","20s","5s","0.2s","tau = L/R = 2/10 = 0.2s."
+3012,3,3,"Capacitor C=1uF is charged to 100V. Discharged through 1M Ohm resistor. Voltage after 1s?","37V","63V","0V","37V","V = Vo * e^(-t/RC) = 100 * e^(-1/1) = 100 * 0.367 = 36.7V."
+401,4,1,"Ideal Op-Amp Input Impedance:","0","Infinite","50 Ohm","Infinite","No input current."
+402,4,1,"Ideal Op-Amp Output Impedance:","0","Infinite","1k Ohm","0","Ideal voltage source output."
+403,4,1,"Ideal Op-Amp Open Loop Gain:","1","100","Infinite","Infinite","Huge amplification."
+404,4,1,"Virtual Short concept implies:","V+ = V-","V+ = 0","Inputs are shorted to ground","V+ = V-","Feedback forces inputs equal."
+4101,4,2,"Inverting amp with Ri=10k, Rf=100k. Gain is:","-10","10","-100","-10","Av = -Rf/Ri = -100/10 = -10."
+4102,4,3,"Non-inverting amp with Ri=1k, Rf=9k. What input voltage Vin gives Vout=10V?","1V","1.1V","10V","1V","Av = 1 + 9/1 = 10. Vin = 10/10 = 1V."
+405,4,1,"Virtual Ground occurs when:","Non-inverting input is grounded","Inverting input is grounded","Output is grounded","Non-inverting input is grounded","V- follows V+ (0V)."
+406,4,1,"Inverting Amplifier Gain:","-Rf/Rin","1 + Rf/Rin","Rf/Rin","-Rf/Rin","Standard formula."
+407,4,1,"Non-Inverting Amplifier Gain:","-Rf/Rin","1 + Rf/Rin","1","1 + Rf/Rin","Standard formula."
+408,4,1,"Voltage Follower Gain:","1","-1","Infinite","1","Buffer."
+409,4,1,"Why use a Voltage Follower?","Impedance matching/Buffering","Amplification","Inversion","Impedance matching/Buffering","High Zin, Low Zout."
+410,4,1,"Summing Amplifier is based on:","KCL at inverting node","KVL at output","Ohm's law only","KCL at inverting node","Currents sum up."
+411,4,1,"Difference Amplifier measures:","V2 - V1","V2 + V1","V1 * V2","V2 - V1","Subtracts inputs."
+412,4,1,"CMRR stands for:","Common Mode Rejection Ratio","Current Mode Ratio","Common Mode Resistance","Common Mode Rejection Ratio","Ability to reject noise."
+413,4,1,"Ideal CMRR is:","0","1","Infinite","Infinite","Rejects common signals perfectly."
+414,4,1,"Slew Rate is limit on:","Rate of change of Vout","Current output","Input voltage","Rate of change of Vout","Speed of response (V/us)."
+415,4,1,"Integrator circuit uses:","C in feedback","L in feedback","R in feedback","C in feedback","Vout = -1/RC integral(Vin)."
+416,4,1,"Differentiator circuit uses:","C in input","C in feedback","L in input","C in input","Vout = -RC dVin/dt."
+417,4,1,"Op-Amp Comparator output is:","Linear","Saturated (Rail to Rail)","Zero","Saturated (Rail to Rail)","Switches between Vcc and Vee."
+418,4,1,"Schmitt Trigger adds:","Hysteresis","Gain","Bandwidth","Hysteresis","Positive feedback."
+419,4,1,"Negative feedback improves:","Stability and Bandwidth","Gain","Noise","Stability and Bandwidth","Trades gain for performance."
+420,4,1,"Positive feedback causes:","Oscillation/Saturation","Stability","Filtering","Oscillation/Saturation","Used in oscillators."
+4103,4,3,"In an inverting amplifier, Rf=10kO and Rin=1kO. What is the voltage gain?","-10","10","-11","-10","Gain A = -Rf/Rin = -10/1 = -10."
+4104,4,3,"In a non-inverting amplifier, Rf=10kO and R1=2kO. What is the gain?","6","5","11","6","Gain A = 1 + (Rf/R1) = 1 + 10/2 = 6."
+4105,4,3,"A unity gain buffer has an input of 5V. What is the output voltage?","5V","0V","-5V","5V","Gain is 1, so Vout = Vin."
+501,5,1,"Laplace transform converts:","Time domain to s-domain","Freq to Time","Time to Discrete","Time domain to s-domain","Differential eqn to Algebra."
+502,5,1,"Variable 's' is:","Complex frequency (sigma + jw)","Real freq","Time","Complex frequency (sigma + jw)","Definition."
+503,5,1,"L{delta(t)} (Impulse) is:","1","1/s","s","1","Flat spectrum."
+504,5,1,"L{u(t)} (Step) is:","1/s","1","1/s^2","1/s","Integration."
+505,5,1,"L{e^-at} is:","1/(s+a)","1/(s-a)","s+a","1/(s+a)","Exponential decay."
+506,5,1,"L{sin(wt)} is:","w / (s^2 + w^2)","s / (s^2 + w^2)","1 / (s^2 + w^2)","w / (s^2 + w^2)","Standard pair."
+507,5,1,"L{cos(wt)} is:","s / (s^2 + w^2)","w / (s^2 + w^2)","s / (s+w)","s / (s^2 + w^2)","Standard pair."
+508,5,1,"L{t} (Ramp) is:","1/s^2","1/s","2/s^3","1/s^2","Integration of step."
+509,5,1,"Differentiation in time L{df/dt} corresponds to:","sF(s) - f(0)","F(s)/s","sF(s)","sF(s) - f(0)","Frequency derivative."
+510,5,1,"Integration in time L{integral f} corresponds to:","F(s)/s","sF(s)","F(s)","F(s)/s","Frequency integration."
+511,5,1,"Final Value Theorem applies if:","Poles are in LHP (stable)","Poles in RHP","Anytime","Poles are in LHP (stable)","System must settle."
+512,5,1,"Initial Value Theorem gives f(0) from:","lim s->inf sF(s)","lim s->0 sF(s)","F(0)","lim s->inf sF(s)","High freq behavior."
+513,5,1,"Shift in time f(t-a)u(t-a) corresponds to:","e^-as F(s)","e^as F(s)","F(s-a)","e^-as F(s)","Time delay."
+514,5,1,"Shift in frequency F(s+a) corresponds to:","e^-at f(t)","f(t-a)","e^at f(t)","e^-at f(t)","Modulation/Damping."
+515,5,1,"Convolution f * g corresponds to:","F(s) * G(s)","F(s) + G(s)","F(s) / G(s)","F(s) * G(s)","Multiplication in s."
+516,5,1,"Transfer Function H(s) is:","Y(s) / X(s)","X(s) / Y(s)","Y(s) * X(s)","Y(s) / X(s)","Output over Input."
+517,5,1,"Region of Convergence (ROC) relates to:","Existence of Transform","Amplitude","Phase","Existence of Transform","Integral convergence."
+518,5,1,"Inverse Laplace is found via:","Partial Fraction Expansion","Differentiation","Integration","Partial Fraction Expansion","Break down into known pairs."
+519,5,1,"Resistor in s-domain:","R","sR","1/sR","R","No frequency dependence."
+520,5,1,"Inductor in s-domain (zero init):","sL","1/sL","L","sL","Impedance."
+521,5,1,"Capacitor in s-domain (zero init):","1/sC","sC","C","1/sC","Impedance."
+522,5,1,"Impulse response h(t) is inverse Laplace of:","Transfer function H(s)","Input X(s)","Output Y(s)","Transfer function H(s)","Input is 1."
+523,5,1,"Stability is determined by:","Poles","Zeros","Gain","Poles","Denominator roots."
+524,5,1,"System is stable if poles are in:","Left Half Plane","Right Half Plane","Imaginary Axis","Left Half Plane","Decaying exponentials."
+525,5,1,"Marginal stability occurs if poles are on:","Imaginary Axis (simple)","Real Axis","RHP","Imaginary Axis (simple)","Oscillatory constant."
+526,5,1,"DC Gain is found by setting s to:","0","Infinity","1","0","Zero frequency."
+5101,5,3,"Given F(s) = 2/s(s+2). Use Final Value Theorem to find f(inf).","1","2","0","1","f(inf) = lim s->0 sF(s) = 2/(0+2) = 1."
+5102,5,3,"Given F(s) = (3s+1)/(s^2+4s+3). Use Initial Value Theorem to find f(0).","3","1","0","3","f(0) = lim s->inf sF(s) = (3s^2 + s)/(s^2 + 4s + 3) = 3."
+601,6,1,"Network function H(s) is ratio of:","Response to Excitation","Excitation to Response","Power to Voltage","Response to Excitation","Output/Input."
+602,6,1,"Driving point impedance is:","V(s)/I(s) at same port","V2/V1","I2/I1","V(s)/I(s) at same port","Input impedance."
+603,6,1,"Transfer impedance is:","V_out / I_in","V_in / I_out","V_out / V_in","V_out / I_in","Transimpedance."
+604,6,1,"Voltage gain function:","V2/V1","I2/I1","V2/I1","V2/V1","Dimensionless."
+605,6,1,"Poles of H(s) determine:","Natural response/Stability","Magnitude only","Zeros","Natural response/Stability","Time domain form."
+606,6,1,"Zeros of H(s) determine:","Frequencies blocked","Stability","Decay rate","Frequencies blocked","Transmission zeros."
+607,6,1,"Reciprocal network implies:","Z12 = Z21","Z11 = Z22","Z11 = 0","Z12 = Z21","Swap input/output."
+608,6,1,"Symmetrical network implies:","Z11 = Z22","Z12 = 0","Z21 = 1","Z11 = Z22","Input/Output ports identical."
+609,6,1,"Z-parameters are:","Impedance parameters","Admittance parameters","Hybrid","Impedance parameters","Open circuit Z."
+610,6,1,"Y-parameters are:","Admittance parameters","Impedance parameters","Transmission","Admittance parameters","Short circuit Y."
+611,6,1,"h-parameters are:","Hybrid parameters","High parameters","Heat parameters","Hybrid parameters","Mixed units."
+612,6,1,"ABCD parameters are:","Transmission parameters","Gain parameters","Scatter","Transmission parameters","Chain parameters."
+613,6,1,"Condition for reciprocity in ABCD:","AD - BC = 1","A = D","B = C","AD - BC = 1","Determinant is 1."
+614,6,1,"Condition for symmetry in ABCD:","A = D","B = C","AD - BC = 0","A = D","Input/Output match."
+615,6,1,"Z11 is measured with:","Port 2 Open","Port 2 Short","Port 1 Short","Port 2 Open","Input impedance open."
+616,6,1,"Y11 is measured with:","Port 2 Short","Port 2 Open","Port 1 Open","Port 2 Short","Input admittance short."
+617,6,1,"h21 represents:","Forward Current Gain","Input Impedance","Output Admittance","Forward Current Gain","Current ratio."
+618,6,1,"g-parameters are inverse of:","h-parameters","z-parameters","y-parameters","h-parameters","Inverse hybrid."
+619,6,1,"Cascade connection uses:","ABCD parameters","Z parameters","h parameters","ABCD parameters","Matrix multiplication."
+620,6,1,"Quality factor Q of bandpass filter:","Center freq / Bandwidth","Bandwidth / Center freq","Gain / Freq","Center freq / Bandwidth","Selectivity."
+621,6,1,"Hurwitz polynomial has roots in:","LHP only","RHP only","Anywhere","LHP only","Stable denominator."
+622,6,1,"Positive Real Function (PRF) represents:","Passive driving point impedance","Active gain","Unstable system","Passive driving point impedance","Real parts > 0."
+701,7,1,"DC stands for:","Direct Current","Digital Current","Dual Current","Direct Current","Constant polarity."
+702,7,1,"AC stands for:","Alternating Current","Active Current","Analog Current","Alternating Current","Changing polarity."
+703,7,1,"Frequency of DC is:","0 Hz","50 Hz","Infinite","0 Hz","No change over time."
+704,7,1,"Period T of a waveform is related to frequency f by:","T = 1/f","T = f","T = 2f","T = 1/f","Inverse relationship."
+705,7,1,"RMS stands for:","Root Mean Square","Real Mean Sum","Rated Max Speed","Root Mean Square","Effective DC value."
+706,7,1,"RMS value of sine wave with peak Vm:","Vm / sqrt(2)","Vm * sqrt(2)","Vm / 2","Vm / sqrt(2)","0.707 * Vm."
+707,7,1,"Average value of full sine wave over one period:","0","Vm","Vm/2","0","Positive cancels negative."
+708,7,1,"Impedance Z is vector sum of:","Resistance and Reactance","R and L","V and I","Resistance and Reactance","Z = R + jX."
+709,7,1,"Real power P unit:","Watt (W)","VAR","VA","Watt (W)","Active power."
+710,7,1,"Reactive power Q unit:","Volt-Ampere Reactive (VAR)","Watt","Joule","Volt-Ampere Reactive (VAR)","Stored/returned power."
+711,7,1,"Apparent power S unit:","Volt-Ampere (VA)","Watt","VAR","Volt-Ampere (VA)","Total power magnitude."
+712,7,1,"Power Factor (PF) is:","P / S (Real/Apparent)","Q / S","S / P","P / S (Real/Apparent)","cos(theta)."
+713,7,1,"For purely resistive load, PF is:","1 (Unity)","0","0.5","1 (Unity)","V and I in phase."
+714,7,1,"For purely inductive load, PF is:","0 Lagging","0 Leading","1","0 Lagging","Current lags voltage."
+715,7,1,"For purely capacitive load, PF is:","0 Leading","0 Lagging","1","0 Leading","Current leads voltage."
+716,7,1,"Resonance occurs when:","Xl = Xc","R = 0","Z = infinity","Xl = Xc","Reactances cancel."
+717,7,1,"At series resonance, Impedance is:","Minimum (R)","Maximum","Zero","Minimum (R)","Series LC short."
+718,7,1,"At parallel resonance, Impedance is:","Maximum","Minimum","Zero","Maximum","Tank circuit open."
+719,7,1,"Phasor representation requires:","Same frequency","Same amplitude","DC","Same frequency","Rotating vectors."
+720,7,1,"Complex power S is:","V_rms * conj(I_rms)","V * I","P + Q","V_rms * conj(I_rms)","S = P + jQ."
+7101,7,2,"A series RL circuit has R=4 Ohm and XL=3 Ohm. Impedance magnitude is:","5 Ohm","7 Ohm","1 Ohm","5 Ohm","Z = sqrt(R^2 + XL^2) = sqrt(16+9) = 5 Ohm."
+7102,7,3,"A supply v(t)=100cos(100t) is applied to a 10 Ohm resistor. Average power consumed is:","500W","1000W","250W","500W","P = Vrms^2/R = (100/sqrt2)^2/10 = 5000/10 = 500W."
+801,8,1,"Standard phase shift in 3-phase:","120 degrees","90 degrees","180 degrees","120 degrees","Balanced."
+802,8,1,"Sequence ABC is:","Positive Sequence","Negative Sequence","Zero Sequence","Positive Sequence","Standard rotation."
+803,8,1,"Sequence CBA is:","Negative Sequence","Positive Sequence","Zero Sequence","Negative Sequence","Reverse rotation."
+804,8,1,"Wye (Star) connection symbol:","Y","Delta","Pi","Y","Shape."
+805,8,1,"Delta (Mesh) connection symbol:","Triangle","Y","T","Triangle","Greek Delta."
+806,8,1,"In balanced Y, Line Voltage = ?","sq(3) * Phase Voltage","Phase Voltage","3 * Phase Voltage","sq(3) * Phase Voltage","Vl leads Vp by 30."
+807,8,1,"In balanced Y, Line Current = ?","Phase Current","sq(3) * Phase Current","Phase Current / 3","Phase Current","Series connection to line."
+808,8,1,"In balanced Delta, Line Voltage = ?","Phase Voltage","sq(3) * Phase Voltage","0","Phase Voltage","Parallel connection."
+809,8,1,"In balanced Delta, Line Current = ?","sq(3) * Phase Current","Phase Current","Phase Current / sq(3)","sq(3) * Phase Current","Il lags Ip by 30."
+810,8,1,"Neutral current in balanced Y system:","Zero","Max","Line Current","Zero","Phasors sum to 0."
+811,8,1,"Total power in balanced 3-phase (Line values):","sq(3) Vl Il cos(theta)","3 Vl Il cos(theta)","Vl Il","sq(3) Vl Il cos(theta)","Standard formula."
+812,8,1,"Total power in balanced 3-phase (Phase values):","3 Vp Ip cos(theta)","sq(3) Vp Ip","Vp Ip","3 Vp Ip cos(theta)","Sum of 3 phases."
+813,8,1,"Two-Wattmeter method measures:","Total 3-phase power","Reactive power only","Line voltage","Total 3-phase power","Valid for balanced/unbalanced 3-wire."
+814,8,1,"One wattmeter reads 0 if PF is:","0.5","1","0","0.5","60 degree phase shift."
+815,8,1,"Wattmeters read equal if PF is:","1 (Unity)","0","0.5","1 (Unity)","Resistive load."
+816,8,1,"Advantages of 3-phase:","Constant power, less copper","Simpler to wire","Lower voltage","Constant power, less copper","Efficient transmission."
+817,8,1,"Phase voltage implies voltage between:","Line and Neutral","Line and Line","Line and Ground","Line and Neutral","In Y-system."
+818,8,1,"Line voltage implies voltage between:","Line and Line","Line and Neutral","Ground","Line and Line","Standard spec."
+819,8,1,"In a balanced 3-phase system, the sum of instantaneous voltages is:","Zero","Maximum","Infinite","Zero","Phasor sum is 0."
+820,8,1,"The Neutral point in a Star (Y) connection is:","Common point of 3 windings","Line connection","Floating","Common point of 3 windings","Vector sum point."
+8101,8,3,"A star-connected system has a phase voltage of 230V. What is the line voltage?","400V","230V","133V","400V","V_L = sqrt(3) * V_P = 1.732 * 230 = 400V."
+8102,8,3,"In a delta-connected system, the phase current is 10A. What is the line current?","17.3A","10A","30A","17.3A","I_L = sqrt(3) * I_P = 1.732 * 10 = 17.32A."
+8103,8,3,"Calculate total power for V_L=400V, I_L=10A, and PF=0.8 in a 3-phase system.","5.54 kW","4.00 kW","6.93 kW","5.54 kW","P = sqrt(3) * V_L * I_L * cos(phi) = 1.732 * 400 * 10 * 0.8 = 5.54 kW."
+8104,8,3,"A 3-phase motor takes 5kW at 400V (Line) and 9A (Line). Find the Power Factor.","0.80","0.70","0.90","0.80","cos(phi) = P / (sqrt(3) * V_L * I_L) = 5000 / (1.732 * 400 * 9) = 0.80."
+8105,8,3,"A balanced star load is connected to a 440V line. What is the voltage across each phase?","254V","440V","762V","254V","V_P = V_L / sqrt(3) = 440 / 1.732 = 254V."
+8106,8,3,"In a delta system with V_L=400V and phase impedance Z=40O, what is the line current?","17.3A","10A","5.7A","17.3A","I_P = V_L / Z = 400/40 = 10A; I_L = sqrt(3) * I_P = 17.32A."
+8107,8,3,"Find Apparent Power S for a balanced system with V_L=415V and I_L=20A.","14.37 kVA","8.30 kVA","24.90 kVA","14.37 kVA","S = sqrt(3) * V_L * I_L = 1.732 * 415 * 20 = 14.37 kVA."
+8108,8,3,"For a load with S=10kVA and Real Power P=8kW, what is the Reactive Power Q?","6 kVAR","2 kVAR","18 kVAR","6 kVAR","Q = sqrt(S^2 - P^2) = sqrt(100 - 64) = 6 kVAR."
 `;

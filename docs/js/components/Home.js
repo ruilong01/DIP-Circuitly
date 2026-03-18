@@ -43,8 +43,23 @@ window.Home = function ({ topicProgress, revisionPoolCount, unfamiliarPoolCount,
         sub.textContent = `Module ${topic.id}`;
         card.appendChild(sub);
 
-        // Progress Section
-        const stats = (topicProgress && topicProgress[topic.id]) ? topicProgress[topic.id] : { xp: 0 };
+        // Progress Section — Bayesian proficiency + XP level
+        const profile = window.ProfileService.getActiveProfile();
+        const globalStats = profile ? profile.stats : null;
+        const topicStats = (globalStats && globalStats[topic.id]) ? globalStats[topic.id] : { correctCount: 0, totalAttempts: 0, xp: 0 };
+        const stats = (topicProgress && topicProgress[topic.id]) ? topicProgress[topic.id] : { xp: topicStats.xp || 0 };
+
+        // Bayesian-smoothed proficiency (from teammate's version — more meaningful at low attempts)
+        const k = 5;
+        const attempts = topicStats.totalAttempts || 0;
+        const correct = topicStats.correctCount || 0;
+        let proficiency = 0;
+        if (attempts > 0) {
+            const safeAttempts = Math.max(attempts, correct);
+            proficiency = Math.min(100, Math.round(((correct + k) / (safeAttempts + 2 * k)) * 100));
+        }
+
+        // XP level (kept from existing version)
         const level = Math.floor(stats.xp / 100) + 1;
         const currentLevelXP = stats.xp % 100;
 
@@ -55,8 +70,8 @@ window.Home = function ({ topicProgress, revisionPoolCount, unfamiliarPoolCount,
         progressInfo.style.marginBottom = '6px';
         progressInfo.style.color = '#cbd5e1';
         progressInfo.innerHTML = `
-            <span>Lvl ${level}</span>
-            <span style="color:var(--accent)">${currentLevelXP} / 100 XP</span>
+            <span>Lvl ${level} &bull; Proficiency</span>
+            <span style="color:var(--accent)">${proficiency}%</span>
         `;
         card.appendChild(progressInfo);
 
@@ -64,9 +79,10 @@ window.Home = function ({ topicProgress, revisionPoolCount, unfamiliarPoolCount,
         rail.className = 'progress-rail';
         const fill = document.createElement('div');
         fill.className = 'progress-fill';
-        fill.style.width = `${currentLevelXP}%`;
+        fill.style.width = `${proficiency}%`;
         rail.appendChild(fill);
         card.appendChild(rail);
+
 
         // Action Button
         const btn = document.createElement('button');
