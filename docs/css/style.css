@@ -100,12 +100,26 @@ body {
     }
 }
 
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
 .animate-slide-in {
     animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .animate-fade-in {
     animation: fadeIn 0.3s ease-out;
+}
+
+.animate-fade-out {
+    animation: fadeOut 0.3s ease-in forwards;
 }
 
 /* Components */
@@ -433,4 +447,56 @@ body {
     .quiz-right-col {
         width: 100%;
     }
+}
+
+/* Chatbot UI Styles */
+#chatbot-wrapper {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    z-index: 9999;
+}
+
+#chatbot-toggle {
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+#chatbot-toggle:hover {
+    transform: scale(1.1);
+}
+
+#chatbot-messages::-webkit-scrollbar {
+    width: 6px;
+}
+#chatbot-messages::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+#chatbot-messages::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.input-field {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--border-radius);
+    color: var(--text-main);
+    font-family: var(--font-stack);
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input-field:focus {
+    border-color: var(--primary);
+}
+
+/* Modal and Overlays */
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.8) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+}
+
+.leaderboard-container {
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5) !important;
 }

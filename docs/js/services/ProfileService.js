@@ -26,7 +26,7 @@ window.ProfileService = {
     },
 
     getAllProfiles: async function () {
-        if (window.DataService.isOnline) {
+        if (window.DataService && window.DataService.isOnline) {
             try {
                 const res = await fetch(`${window.CONFIG.API_BASE_URL}/api/users`);
                 const data = await res.json();
@@ -51,11 +51,12 @@ window.ProfileService = {
     },
 
     addProfile: async function (profile) {
+        // Validation
         if (!profile.name || !profile.studentId || !profile.username || !profile.password) {
             return { success: false, error: "All fields are required (Name, ID, Username, Password)." };
         }
 
-        if (window.DataService.isOnline) {
+        if (window.DataService && window.DataService.isOnline) {
             try {
                 const res = await fetch(`${window.CONFIG.API_BASE_URL}/api/auth/register`, {
                     method: 'POST',
@@ -70,7 +71,7 @@ window.ProfileService = {
                 });
                 const data = await res.json();
                 if (data.success) {
-                    return { success: true };
+                    // We still create the local profile structure for smooth offline capability
                 } else {
                     return { success: false, error: data.error || "Registration failed" };
                 }
@@ -79,10 +80,12 @@ window.ProfileService = {
             }
         }
 
-        // --- LOCAL FALLBACK ---
+        // Check for duplicate ID
         if (this.profiles.some(p => p.studentId === profile.studentId)) {
             return { success: false, error: "Student ID already exists." };
         }
+
+        // Check for duplicate Username
         if (this.profiles.some(p => p.username === profile.username)) {
             return { success: false, error: "Username already taken." };
         }
@@ -90,12 +93,20 @@ window.ProfileService = {
         const newProfile = {
             ...profile,
             createdAt: new Date().toISOString(),
+            // Default App State
             xp: 0,
+            weeklyXP: 0,
+            lastResetWeek: this.getCurrentWeekId(),
             hearts: 5,
             topicProgress: {},
             revisionPool: [],
-            stats: {}
+            unfamiliarPool: [],
+            stats: {},
+            answer_history: [],
+            questionMastery: {},
+            streakData: { currentStreak: 0, bestStreak: 0 }
         };
+
         this.profiles.push(newProfile);
         this.save();
         return { success: true };
@@ -112,10 +123,13 @@ window.ProfileService = {
                 hearts: 999
             };
             this.setActiveProfile(admin.studentId);
-            return { success: true, profile: admin };
+            return {
+                success: true,
+                profile: admin
+            };
         }
 
-        if (window.DataService.isOnline) {
+        if (window.DataService && window.DataService.isOnline) {
             try {
                 const res = await fetch(`${window.CONFIG.API_BASE_URL}/api/auth/login`, {
                     method: 'POST',
@@ -125,16 +139,30 @@ window.ProfileService = {
                 const data = await res.json();
                 if (data.success) {
                     this.setActiveProfile(data.user.studentId);
+                    
+                    // Add modern fields if missing from backend record
+                    const modernUser = {
+                        ...data.user,
+                        weeklyXP: data.user.weeklyXP || 0,
+                        lastResetWeek: data.user.lastResetWeek || this.getCurrentWeekId(),
+                        revisionPool: data.user.revisionPool || [],
+                        unfamiliarPool: data.user.unfamiliarPool || [],
+                        stats: data.user.stats || {},
+                        answer_history: data.user.answer_history || [],
+                        questionMastery: data.user.questionMastery || {},
+                        streakData: data.user.streakData || { currentStreak: 0, bestStreak: 0 }
+                    };
+
                     // Add to in-memory profiles if not exists (for local lookups)
                     if (!this.profiles.some(p => p.studentId === data.user.studentId)) {
-                        this.profiles.push(data.user);
+                        this.profiles.push(modernUser);
                     } else {
                         // Update existing
                         const idx = this.profiles.findIndex(p => p.studentId === data.user.studentId);
-                        this.profiles[idx] = data.user;
+                        this.profiles[idx] = modernUser;
                     }
                     this.save();
-                    return { success: true, profile: data.user };
+                    return { success: true, profile: modernUser };
                 } else {
                     return { success: false, error: data.error || "Login failed" };
                 }
@@ -143,7 +171,6 @@ window.ProfileService = {
             }
         }
 
-        // --- LOCAL FALLBACK ---
         const profile = this.profiles.find(p => p.username === username && p.password === password);
         if (profile) {
             this.setActiveProfile(profile.studentId);
@@ -164,32 +191,68 @@ window.ProfileService = {
     resetProfile: function (studentId) {
         const profile = this.profiles.find(p => p.studentId === studentId);
         if (profile) {
+            console.warn(`[ProfileService] DESTRICTIVE RESET triggered for: ${profile.name} (${studentId})`);
+
+            // Learning-related fields
             profile.xp = 0;
+            profile.weeklyXP = 0;
+            profile.lastResetWeek = this.getCurrentWeekId();
             profile.hearts = 5;
             profile.topicProgress = {};
             profile.revisionPool = [];
+            profile.unfamiliarPool = []; // Clear unfamiliar concepts
+
+            // Stats object: holds correct_count, total_attempts, proficiency scores
+            profile.stats = {};
+
+            // Per-question mastery
+            profile.questionMastery = {};
+
+            // Historical logs
+            profile.answer_history = [];
+
+            // Streak data
+            profile.streakData = {
+                currentStreak: 0,
+                bestStreak: 0,
+                lastActivityDate: null
+            };
+
+            // Sync metadata
             profile.lastActive = new Date().toISOString();
+            profile.nextHeartRestoreTime = null;
+
+            console.log(`[ProfileService] SUCCESS: All learning data cleared from database for ${profile.name}.`);
             this.save();
-            // TODO: Add backend reset if needed
+            return { success: true };
         }
+        console.error(`[ProfileService] RESET FAILED: Profile ${studentId} not found.`);
+        return { success: false, error: "Profile not found" };
     },
 
     // Generic Progress Update
     updateProgress: async function (studentId, data) {
         const profile = this.profiles.find(p => p.studentId === studentId);
         if (profile) {
-            // Merge data (xp, hearts, topicProgress)
-            if (data.xp !== undefined) profile.xp = data.xp;
+            this.checkWeeklyReset(profile);
+            // Merge data (xp, hearts, topicProgress, nextHeartRestoreTime)
+            if (data.xp !== undefined) {
+                const diff = data.xp - profile.xp;
+                if (diff > 0) profile.weeklyXP = (profile.weeklyXP || 0) + diff;
+                profile.xp = data.xp;
+            }
             if (data.hearts !== undefined) profile.hearts = data.hearts;
             if (data.topicProgress !== undefined) profile.topicProgress = data.topicProgress;
             if (data.revisionPool !== undefined) profile.revisionPool = data.revisionPool;
+            if (data.nextHeartRestoreTime !== undefined) profile.nextHeartRestoreTime = data.nextHeartRestoreTime;
 
             profile.lastActive = new Date().toISOString();
             this.save();
 
-            if (window.DataService.isOnline && studentId !== 'ADMIN') {
+            if (window.DataService && window.DataService.isOnline && studentId !== 'ADMIN') {
                 try {
-                    await fetch(`${window.CONFIG.API_BASE_URL}/api/progress`, {
+                    // Fire-and-forget to backend so it doesn't block UI
+                    fetch(`${window.CONFIG.API_BASE_URL}/api/progress`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -198,7 +261,7 @@ window.ProfileService = {
                             hearts: profile.hearts,
                             topicProgress: profile.topicProgress
                         })
-                    });
+                    }).catch(e => console.warn("Background progress sync failed:", e));
                 } catch (e) {
                     console.error("Backend progress sync failed:", e);
                 }
@@ -206,28 +269,203 @@ window.ProfileService = {
         }
     },
 
-    updateStats: function (studentId, topicId, xpAdded, timeAdded = 0) {
+    updateStats: function (studentId, topicId, correctAdded, totalAdded, xpAdded, timeAdded = 0) {
         const profile = this.profiles.find(p => p.studentId === studentId);
         if (profile) {
+            this.checkWeeklyReset(profile);
             if (!profile.stats) profile.stats = {};
-            if (!profile.stats[topicId]) profile.stats[topicId] = { xp: 0, time: 0 };
+            if (!profile.stats[topicId]) profile.stats[topicId] = { xp: 0, time: 0, correct: 0, total: 0, score: 0 };
+
+            // Ensure legacy stats have correct/total if they don't exist
+            if (profile.stats[topicId].correct === undefined) profile.stats[topicId].correct = 0;
+            if (profile.stats[topicId].total === undefined) profile.stats[topicId].total = 0;
 
             profile.stats[topicId].xp += xpAdded;
+            profile.weeklyXP = (profile.weeklyXP || 0) + xpAdded;
+            profile.stats[topicId].correct += correctAdded;
+            profile.stats[topicId].total += totalAdded;
+
             if (timeAdded) {
                 profile.stats[topicId].time = (profile.stats[topicId].time || 0) + timeAdded;
+            }
+
+            // Record in answer_history
+            if (!profile.answer_history) profile.answer_history = [];
+            profile.answer_history.push({
+                topicId: topicId,
+                correct: correctAdded,
+                total: totalAdded,
+                xp: xpAdded,
+                time: timeAdded,
+                timestamp: new Date().toISOString()
+            });
+
+            // EMA score: weight recent session performance (alpha = 0.3)
+            // Naturally forgets old bad runs as performance improves
+            if (totalAdded > 0) {
+                const alpha = 0.3;
+                const sessionAccuracy = correctAdded / totalAdded;
+                const oldScore = profile.stats[topicId].score || 0;
+                profile.stats[topicId].score = alpha * sessionAccuracy + (1 - alpha) * oldScore;
             }
 
             // Also update timestamp
             profile.lastActive = new Date().toISOString();
             this.save();
             
-            // Sync via updateProgress
+            // Sync with old method parameters expected by the wrapper
             this.updateProgress(studentId, {
                 xp: profile.xp,
                 hearts: profile.hearts,
                 topicProgress: profile.topicProgress
             });
         }
+    },
+
+    // Update mastery for a single question
+    updateQuestionMastery: function (studentId, questionId, isCorrect) {
+        if (!questionId) return;
+        const profile = this.profiles.find(p => p.studentId === studentId);
+        if (!profile) return;
+        if (!profile.questionMastery) profile.questionMastery = {};
+        if (!profile.questionMastery[questionId]) {
+            profile.questionMastery[questionId] = { correct: 0, total: 0, mastered: false };
+        }
+        const qm = profile.questionMastery[questionId];
+        qm.total++;
+        if (isCorrect) qm.correct++;
+        // Mastered = correctly answered on 2 or more separate attempts
+        qm.mastered = qm.correct >= 2;
+        this.save();
+    },
+
+    // Get mastery counts for a topic from the questionMastery map
+    getTopicMastery: function (profile, topicId) {
+        if (!profile || !profile.questionMastery) return { mastered: 0, attempted: 0 };
+        const entries = Object.entries(profile.questionMastery).filter(([id]) => {
+            return Math.floor(Number(id) / 100) === Number(topicId);
+        });
+        const attempted = entries.length;
+        const mastered = entries.filter(([, v]) => v.mastered).length;
+        return { mastered, attempted };
+    },
+
+    getCurrentWeekId: function () {
+        const d = new Date();
+        const year = d.getFullYear();
+        const start = new Date(year, 0, 1);
+        const days = Math.floor((d - start) / (24 * 60 * 60 * 1000));
+        const week = Math.ceil((days + start.getDay() + 1) / 7);
+        return `${year}-W${week}`;
+    },
+
+    checkWeeklyReset: function (profile) {
+        const currentWeek = this.getCurrentWeekId();
+        if (profile.lastResetWeek !== currentWeek) {
+            profile.weeklyXP = 0;
+            profile.lastResetWeek = currentWeek;
+            return true;
+        }
+        return false;
+    },
+
+    getLeaderboard: function () {
+        // Filter out admins and sorts by weeklyXP
+        return this.profiles
+            .filter(p => !p.role || p.role !== 'admin')
+            .map(p => {
+                this.checkWeeklyReset(p);
+                return {
+                    name: p.name,
+                    username: p.username,
+                    weeklyXP: p.weeklyXP || 0,
+                    xp: p.xp || 0
+                };
+            })
+            .sort((a, b) => b.weeklyXP - a.weeklyXP)
+            .slice(0, 10); // Show top 10
+    },
+
+    calculateBayesianScore: function (correct, total) {
+        const k = 5;
+        if (!total || total === 0) return 0;
+        return (correct + k) / (total + 2 * k);
+    },
+
+    recalculateAllScores: function (studentId) {
+        const profile = this.profiles.find(p => p.studentId === studentId);
+        if (!profile) return;
+
+        console.log(`[ProfileService] Recalculating scores for: ${profile.name}`);
+
+        // 1. Rebuild stats from history if history exists
+        if (profile.answer_history && profile.answer_history.length > 0) {
+            const newStats = {};
+            profile.answer_history.forEach(log => {
+                const tid = log.topicId;
+                if (!newStats[tid]) {
+                    newStats[tid] = { xp: 0, time: 0, correct: 0, total: 0, score: 0 };
+                    // Preserve existing time if we have it in old stats
+                    if (profile.stats && profile.stats[tid] && profile.stats[tid].time) {
+                        newStats[tid].time = profile.stats[tid].time;
+                    }
+                }
+                newStats[tid].correct += log.correct;
+                newStats[tid].total += log.total;
+                newStats[tid].xp += log.xp;
+                newStats[tid].time += (log.time || 0);
+            });
+            profile.stats = newStats;
+        }
+
+        // 2. Apply Bayesian smoothing to all categories
+        if (profile.stats) {
+            Object.keys(profile.stats).forEach(topicId => {
+                const stat = profile.stats[topicId];
+                if (stat.total !== undefined && stat.correct !== undefined) {
+                    stat.score = this.calculateBayesianScore(stat.correct, stat.total);
+                }
+            });
+        }
+
+        this.save();
+    },
+
+    timeOffset: 0,
+    syncTime: async function () {
+        try {
+            const start = Date.now();
+            // Fallback to a few different time APIs if one fails
+            const apis = [
+                'https://worldtimeapi.org/api/timezone/Etc/UTC',
+                'https://worldtimeapi.org/api/ip'
+            ];
+            let data;
+            for (const api of apis) {
+                try {
+                    const response = await fetch(api);
+                    data = await response.json();
+                    if (data && (data.utc_datetime || data.datetime)) break;
+                } catch (e) { continue; }
+            }
+
+            const serverNow = new Date(data.utc_datetime || data.datetime).getTime();
+            const lat = (Date.now() - start) / 2;
+            this.timeOffset = serverNow - (Date.now() - lat);
+            console.log("Time synced. Offset:", this.timeOffset);
+        } catch (e) {
+            console.warn("Failed to sync time, using local clock", e);
+            this.timeOffset = 0;
+        }
+    },
+
+    getNow: function () {
+        return Date.now() + this.timeOffset;
+    },
+
+    getServerTime: async function () {
+        if (this.timeOffset === 0) await this.syncTime();
+        return this.getNow();
     },
 
     save: function () {

@@ -1,15 +1,11 @@
-window.Quiz = function ({ topicId, customQuestions, onComplete, onExit }) {
+window.Quiz = function ({ topicId, customQuestions, onCorrect, onComplete, onExit }) {
     let questions = [];
+    if (customQuestions && customQuestions.length > 0) {
+        questions = customQuestions;
+    } else {
+        questions = window.DataService.getQuestions(topicId);
+    }
     let currentIndex = 0;
-    
-    const loadQuestions = async () => {
-        if (customQuestions) {
-            questions = customQuestions;
-        } else {
-            questions = await window.DataService.getQuestions(topicId);
-        }
-        renderQuestion();
-    };
     let score = 0;
     let sessionTime = 0; // Seconds
     let questionStartTime = Date.now();
@@ -167,6 +163,64 @@ window.Quiz = function ({ topicId, customQuestions, onComplete, onExit }) {
     let correctCount = 0; // New tracking
     const incorrectResponses = [];
 
+    // Helper to format math text
+    function formatMathText(text) {
+        if (!text) return "";
+
+        const hasCustomDelimiters = text.includes('$') || text.includes('\\(') || text.includes('\\[') || text.includes('$$');
+
+        // Text replacements for symbols and formatting (do this before catching variables)
+        text = text.replace(/\bInf\b/g, '\\(\\infty\\)');
+        text = text.replace(/\b(?:Mega\s*Ohm|mega\s*ohm|MegaOhm|M\s*Ohm)\b/gi, '\\(\\text{M}\\Omega\\)');
+        text = text.replace(/\b(?:kilo\s*ohm|kiloohm|k\s*Ohm)\b/gi, '\\(\\text{k}\\Omega\\)');
+        text = text.replace(/\b(?:Ohm|ohm)s?\b/g, '\\(\\Omega\\)');
+        text = text.replace(/([A-Za-z0-9_]+)\s*=\s*/g, '$1 = ');
+
+        // Already contains delimiters? Skip auto-wrapping but keep for typesetting
+        if (hasCustomDelimiters) return text;
+
+        // Pattern 1: Exponents like 10^-9 or 2^3 or 10^6
+        const exponentPattern = /(\d+\^\{-?\d+\}|\d+\^-?\d+)/g;
+        text = text.replace(exponentPattern, '\\($1\\)');
+
+        // Pattern 2: Scientific notation like 1.5x10^-3
+        const scientificPattern = /(\d+\.?\d*\s*[x*×]\s*10\^\{-?\d+\}|\d+\.?\d*\s*[x*×]\s*10\^-?\d+)/gi;
+        text = text.replace(scientificPattern, '\\($1\\)');
+
+        // Pattern 3: Square Roots like sqrt(2) or sq(LC)
+        const sqrtPattern = /\bsq(?:rt)?\(([^)]+)\)/g;
+        text = text.replace(sqrtPattern, '\\(\\sqrt{$1}\\)');
+
+        // Pattern 4: Circuit Subscripts (Vph, V_ph, R1, etc.)
+        const underscorePattern = /\b([VvIiRLCZP])_([a-z0-9]+)\b/g;
+        text = text.replace(underscorePattern, '\\($1_{$2}\\)');
+
+        const digitPattern = /\b([VvIiRLCZP])(\d+)\b/g;
+        text = text.replace(digitPattern, '\\($1_{$2}\\)');
+
+        // Whitelist for common compound variables
+        const whitelistPattern = /\b(Vph|Iph|Vrms|Irms|Vline|Iline|Vload|Iload|Vm|Im|Rth|Vth|Rn|In|Zth|Ztr)\b/g;
+        text = text.replace(whitelistPattern, match => '\\(' + match[0] + '_{' + match.substring(1) + '}\\)');
+
+        // Pattern 5: Fractions like A/B or ratio
+        // Now handles previously wrapped expressions like \(V_{m}\)
+        const fractionPattern = /((?:[\w\d()]+|\\\([\s\S]*?\\\))\s*)\/\s*((?:[\w\d()]+|\\\([\s\S]*?\\\))\s*)/g;
+        text = text.replace(fractionPattern, (match, p1, p2) => {
+            const clean1 = p1.replace(/\\\(/g, '').replace(/\\\)/g, '');
+            const clean2 = p2.replace(/\\\(/g, '').replace(/\\\)/g, '');
+            return '\\(\\frac{' + clean1.trim() + '}{' + clean2.trim() + '}\\)';
+        });
+
+        // Cleanup: merge adjacent math blocks separated by '*' to render as \cdot
+        // Example: \(V_{m}\) * \(\sqrt{2}\) -> \(V_{m} \cdot \sqrt{2}\)
+        text = text.replace(/\\\)\s*\*\s*\\\(/g, ' \\cdot ');
+
+        // Add line breaks before numbered list items (e.g. " 1.", " 2.")
+        text = text.replace(/\s+(\d+)\.\s+/g, '<br><br>$1. ');
+
+        return text;
+    }
+
     function renderQuestion() {
         if (currentIndex >= questions.length) {
             feedbackOverlay.remove();
@@ -259,6 +313,23 @@ window.Quiz = function ({ topicId, customQuestions, onComplete, onExit }) {
             seenQuestionIds.push(q.id);
         }
 
+        // Publish question context so the chatbot can see what question the student is on
+        const topicName = {
+            1: 'Fundamentals', 2: 'Energy Storage', 3: 'Transient/Steady State',
+            4: 'Op-Amps', 5: 'AC Analysis', 6: 'Laplace', 7: 'Three-Phase', 8: 'Frequency Response'
+        }[topicId] || `Topic ${topicId}`;
+        window.currentQuizContext = {
+            topic: topicName,
+            question: q.prompt,
+            options: q.options ? q.options.filter(o => o !== 'NOT_FAMILIAR').join(' | ') : '',
+            questionNumber: currentIndex + 1,
+            totalQuestions: questions.length
+        };
+        // Notify GeminiService of the new context
+        if (window.GeminiService && window.GeminiService.setContext) {
+            window.GeminiService.setContext(window.currentQuizContext);
+        }
+
         // Render math equations if MathJax is available
         if (window.MathJax && window.MathJax.typesetPromise) {
             window.MathJax.typesetPromise([quizCard]).catch(err => console.warn('MathJax error:', err));
@@ -267,6 +338,12 @@ window.Quiz = function ({ topicId, customQuestions, onComplete, onExit }) {
 
     // Review Screen Logic
     function renderReviewScreen() {
+        // Clear quiz context when quiz is done
+        window.currentQuizContext = null;
+        if (window.GeminiService && window.GeminiService.clearContext) {
+            window.GeminiService.clearContext();
+        }
+
         container.innerHTML = '';
         container.style.height = 'auto';
         container.style.paddingTop = '40px';
@@ -321,8 +398,8 @@ window.Quiz = function ({ topicId, customQuestions, onComplete, onExit }) {
                 ${imgHTML}
                 <div style="margin-bottom:8px; color:var(--error);">Your Answer: ${item.userAnswer}</div>
                 <div style="margin-bottom:16px; color:var(--accent);">Correct Answer: ${item.correctAnswer}</div>
-                <div style="background:rgba(255,255,255,0.05); padding:16px; border-radius:8px; font-size:0.9rem; line-height:1.5; color:var(--text-muted);">
-                    <strong>Explanation:</strong> ${item.explanation || "No explanation provided."}
+                <div style="background:rgba(255,255,255,0.05); padding:16px; border-radius:8px; font-size:0.9rem; line-height:1.5; color:var(--text-muted); text-align:left;">
+                    <strong>Explanation:</strong><br/> ${item.explanation ? formatMathText(item.explanation) : "No explanation provided."}
                 </div>
             `;
             list.appendChild(card);
@@ -360,9 +437,19 @@ window.Quiz = function ({ topicId, customQuestions, onComplete, onExit }) {
 
             feedbackOverlay.innerHTML = '';
 
+            // Track per-question mastery in real time
+            if (!isNotFamiliar && q.id != null && window.ProfileService) {
+                const activeProfile = window.ProfileService.getActiveProfile();
+                if (activeProfile) {
+                    window.ProfileService.updateQuestionMastery(activeProfile.studentId, q.id, isCorrect);
+                }
+            }
+
+
             if (isCorrect) {
                 score += 1;
                 correctCount++; // Increment correct count
+                if (onCorrect) onCorrect(q.id);
                 // Adaptive Logic
                 if (Number(topicId) === 8 && adaptiveStats.mode === 'THEORY') {
                     adaptiveStats.recoveryCount++;
@@ -385,10 +472,18 @@ window.Quiz = function ({ topicId, customQuestions, onComplete, onExit }) {
                     successStreak = 0; // Reset streak after level up
                 }
 
+                const showExpHtml = (Number(topicId) === 1 || Number(topicId) === 2 || Number(topicId) === 3)
+                    ? `<button class="btn btn-outline" id="exp-btn" style="min-width:200px; margin-top:10px; font-size:0.85rem; border: 1px solid var(--accent); color: var(--accent); background: transparent;">SHOW EXPLANATION & STEPS</button>
+                       <div id="exp-content" style="display:none; margin-top:15px; max-width:600px; width:100%; text-align:left; background:rgba(0,0,0,0.2); padding:15px; border-radius:8px; color:var(--text-muted); font-size:0.9rem; max-height: 200px; overflow-y: auto;">
+                           ${q.explanation ? formatMathText(q.explanation) : "Explanation coming soon..."}
+                       </div>`
+                    : '';
+
                 feedbackOverlay.style.borderTopColor = 'var(--accent)';
                 feedbackOverlay.innerHTML = `
                     <h2 style="color:var(--accent); text-transform:uppercase; letter-spacing:1px; margin:0;">Correct!</h2>
-                    <button class="btn btn-primary" id="next-btn" style="min-width:200px;">CONTINUE</button>
+                    ${showExpHtml}
+                    <button class="btn btn-primary" id="next-btn" style="min-width:200px; margin-top:12px;">CONTINUE</button>
                 `;
             } else {
                 if (Number(topicId) === 8) adaptiveStats.wrongCount++;
@@ -448,12 +543,19 @@ window.Quiz = function ({ topicId, customQuestions, onComplete, onExit }) {
                     ? `<p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:10px;">Generated circuit questions can't be saved to the Unfamiliar pool — only static theory questions can.</p>`
                     : '';
 
+                const showExpHtml = (Number(topicId) === 1 || Number(topicId) === 2 || Number(topicId) === 3)
+                    ? `<button class="btn btn-outline" id="exp-btn" style="min-width:200px; margin-top:10px; font-size:0.85rem; border: 1px solid ${accentColor}; color: ${accentColor}; background: transparent;">SHOW EXPLANATION & STEPS</button>
+                       <div id="exp-content" style="display:none; margin-top:15px; max-width:600px; width:100%; text-align:left; background:rgba(0,0,0,0.2); padding:15px; border-radius:8px; color:var(--text-muted); font-size:0.9rem; max-height: 200px; overflow-y: auto;">
+                           ${q.explanation ? formatMathText(q.explanation) : "Explanation coming soon..."}
+                       </div>`
+                    : (q.explanation ? `<div style="max-width:600px; width:100%; text-align:left; background:rgba(0,0,0,0.2); padding:15px; border-radius:8px; color:var(--text-muted); font-size:0.9rem;">${formatMathText(q.explanation)}</div>` : '');
+
                 feedbackOverlay.style.borderTopColor = accentColor;
                 feedbackOverlay.innerHTML = `
                     <h2 style="color:${accentColor}; text-transform:uppercase; letter-spacing:1px; margin:0;">${titleText}</h2>
                     ${subtitleExtra}
-                    <p style="color:var(--text-main); margin-bottom:10px;">Correct Answer: <strong>${q.correctAnswer}</strong></p>
-                    ${q.explanation ? `<div style="max-width:600px; text-align:center; color:var(--text-muted); font-size:0.9rem;">${q.explanation}</div>` : ''}
+                    <p style="color:var(--text-main); margin-bottom:10px;">Correct Answer: <strong>${formatMathText(q.correctAnswer)}</strong></p>
+                    ${showExpHtml}
                     <button class="btn btn-secondary" id="next-btn" style="min-width:200px; margin-top:12px; border-color:${accentColor}; color:${accentColor};">GOT IT</button>
                 `;
             }
@@ -483,6 +585,20 @@ window.Quiz = function ({ topicId, customQuestions, onComplete, onExit }) {
                 renderQuestion();
             };
 
+            const expBtn = feedbackOverlay.querySelector('#exp-btn');
+            if (expBtn) {
+                expBtn.onclick = () => {
+                    const content = feedbackOverlay.querySelector('#exp-content');
+                    if (content.style.display === 'none') {
+                        content.style.display = 'block';
+                        expBtn.textContent = 'HIDE EXPLANATION';
+                    } else {
+                        content.style.display = 'none';
+                        expBtn.textContent = 'SHOW EXPLANATION & STEPS';
+                    }
+                };
+            }
+
             feedbackOverlay.style.transform = 'translateY(0)';
 
             // Render math equations in feedback if MathJax is available
@@ -492,6 +608,6 @@ window.Quiz = function ({ topicId, customQuestions, onComplete, onExit }) {
         }
     };
 
-    loadQuestions();
+    renderQuestion();
     return container;
 };

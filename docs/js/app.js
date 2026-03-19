@@ -32,31 +32,61 @@ const initApp = async () => {
 
     // We can still get the active profile to highlight/select, but we don't call loadUser() immediately.
     State.view = ROUTES.LOGIN;
+    localStorage.removeItem('privacyAccepted'); // Clear old persistent acceptance
     render();
+
+    // Initialize Chatbot UI Globally
+    if (window.ChatbotUI) {
+        window.ChatbotUI.init();
+    }
+};
+
+const checkPrivacyNotice = () => {
+    const isAccepted = sessionStorage.getItem('privacyAccepted') === 'true';
+    if (!isAccepted && window.PrivacyModal) {
+        // Prevent duplicates
+        if (document.getElementById('privacy-modal-overlay')) return;
+
+        const modal = window.PrivacyModal({
+            onAccept: () => {
+                sessionStorage.setItem('privacyAccepted', 'true'); // Changed to sessionStorage
+                console.log("Privacy accepted.");
+            }
+        });
+        modal.id = 'privacy-modal-overlay';
+        document.body.appendChild(modal);
+    }
 };
 
 const loadUser = (profile) => {
     State = {
         ...State,
         view: profile.role === 'admin' ? ROUTES.ADMIN : ROUTES.HOME,
-        username: profile.name, // Display Name
+        username: profile.name,
         studentId: profile.studentId,
         xp: profile.xp,
         hearts: profile.hearts,
-        nextHeartRestoreTime: profile.lastActive ? null : null, // Todo: Heart logic in ProfileService if needed
+        nextHeartRestoreTime: profile.nextHeartRestoreTime || null,
         topicProgress: profile.topicProgress || {},
         revisionPool: profile.revisionPool || [],
         isAdmin: profile.role === 'admin'
     };
-    /* 
-       Note: Heart Timer logic was based on "nextHeartRestoreTime" in State.
-       ProfileService currently just stores 'hearts'. 
-       If we want to persist timer, we need to add that to ProfileService.
-       For now, let's keep it simple: Reset to 5 on new session or keep current behavior if we want.
-       Let's assume we just load what's there. 
-    */
 
+    sessionStorage.removeItem('privacyAccepted');
     render();
+    checkPrivacyNotice();
+    
+    // Resume the heart timer if one was already running
+    if (State.hearts < 5) {
+        if (!State.nextHeartRestoreTime) {
+            // Start fresh timer
+            State.nextHeartRestoreTime = Date.now() + (5 * 60 * 1000);
+            if (window.ProfileService) {
+                window.ProfileService.updateProgress(State.studentId, { nextHeartRestoreTime: State.nextHeartRestoreTime });
+            }
+        }
+        startHeartTimer();
+    }
 };
 
 const syncState = () => {
@@ -82,7 +112,7 @@ function render() { // Inside render, code looks at state.view and matches it ag
 
         if (State.isAdmin) {
             header.innerHTML = `
-                <div class="brand-logo-compact" onclick="location.reload()" style="pointer-events: auto;">
+                <div class="brand-logo-compact" id="logo-btn" style="pointer-events: auto; cursor:pointer;">
                     <div class="logo-icon">I</div>
                     <div class="logo-text">Impulse</div>
                 </div>
@@ -95,7 +125,7 @@ function render() { // Inside render, code looks at state.view and matches it ag
             `;
         } else {
             header.innerHTML = `
-                <div class="brand-logo-compact" onclick="location.reload()" style="pointer-events: auto;">
+                <div class="brand-logo-compact" id="logo-btn" style="pointer-events: auto; cursor:pointer;">
                     <div class="logo-icon">I</div>
                     <div class="logo-text">Impulse</div>
                 </div>
@@ -103,6 +133,7 @@ function render() { // Inside render, code looks at state.view and matches it ag
                 <div class="stats-container">
                     <div class="stat-pill glass-pill" id="heart-btn" style="cursor:pointer" title="Click to refill">
                         <span style="margin-right:8px">❤️</span> ${State.hearts}
+                        ${State.hearts < 5 ? `<span id="heart-timer" style="font-size:0.7rem; color:#f87171; margin-left:6px;">...</span>` : ''}
                     </div>
                     <div class="stat-pill glass-pill accent-pill"><span style="margin-right:8px">⚡</span> ${State.xp} XP</div>
                     
@@ -124,14 +155,18 @@ function render() { // Inside render, code looks at state.view and matches it ag
 
         // Bind Buttons
         setTimeout(() => {
+            // Logo -> go to topic menu (home) without reloading
+            const logoBtn = document.getElementById('logo-btn');
+            if (logoBtn) logoBtn.onclick = () => {
+                if (State.studentId && !State.isAdmin) {
+                    State.view = ROUTES.HOME;
+                    render();
+                }
+            };
+
             const logoutBtn = document.getElementById('logout-btn');
             if (logoutBtn) logoutBtn.onclick = () => {
                 if (confirm('Log out?')) {
-                    // Log the behavior before clearing state
-                    if (window.ProfileService && State.studentId) {
-                        window.ProfileService.logBehaviour('user_logout');
-                    }
-                    
                     // Clear Logic
                     State.username = null;
                     State.studentId = null;
@@ -151,7 +186,7 @@ function render() { // Inside render, code looks at state.view and matches it ag
                 if (profileBtn) profileBtn.onclick = () => {
                     const profile = window.ProfileService.getActiveProfile();
                     if (profile && window.StatsChart) {
-                        window.StatsChart({ stats: profile.stats });
+                        window.StatsChart({ profile: profile });
                     } else {
                         alert("Stats not available.");
                     }
@@ -178,25 +213,21 @@ function render() { // Inside render, code looks at state.view and matches it ag
         case ROUTES.LOGIN:
             if (window.Login) {
                 component = window.Login({
-                    onLogin: async (username, password) => {
-                        const result = await window.ProfileService.authenticate(username, password);
+                    onLogin: (username, password) => {
+                        const result = window.ProfileService.authenticate(username, password);
                         if (result.success) {
-                            window.ProfileService.logBehaviour('user_login', { username: username });
                             loadUser(result.profile);
                         } else {
                             alert(result.error);
                         }
                     },
-                    onRegister: async (data) => {
-                        const result = await window.ProfileService.addProfile(data);
+                    onRegister: (data) => {
+                        const result = window.ProfileService.addProfile(data);
                         if (result.success) {
                             // Auto login after signup? Or ask to login?
                             // Let's auto-login for better UX
-                            const auth = await window.ProfileService.authenticate(data.username, data.password);
-                            if (auth.success) {
-                                window.ProfileService.logBehaviour('user_registered', { username: data.username });
-                                loadUser(auth.profile);
-                            }
+                            const auth = window.ProfileService.authenticate(data.username, data.password);
+                            if (auth.success) loadUser(auth.profile);
                         } else {
                             alert(result.error);
                         }
@@ -221,7 +252,6 @@ function render() { // Inside render, code looks at state.view and matches it ag
                         }
                         State.activeTopicId = topicId;
                         State.view = ROUTES.QUIZ;
-                        window.ProfileService.logBehaviour('quiz_started', { topicId: topicId });
                         render();
                     },
                     onStartRevision: () => {
@@ -231,12 +261,10 @@ function render() { // Inside render, code looks at state.view and matches it ag
                         }
                         State.activeTopicId = 'revision';
                         State.view = ROUTES.QUIZ;
-                        window.ProfileService.logBehaviour('revision_started');
                         render();
                     },
                     onStartUnfamiliar: () => {
                         State.view = ROUTES.UNFAMILIAR;
-                        window.ProfileService.logBehaviour('unfamiliar_started');
                         render();
                     }
                 });
@@ -248,7 +276,6 @@ function render() { // Inside render, code looks at state.view and matches it ag
                 component = window.UnfamiliarConceptsModule({
                     onExit: () => {
                         State.view = ROUTES.HOME;
-                        window.ProfileService.logBehaviour('unfamiliar_exited');
                         render();
                     }
                 });
@@ -294,9 +321,23 @@ function render() { // Inside render, code looks at state.view and matches it ag
                                 State.topicProgress[State.activeTopicId] = { xp: 0 };
                             }
                             State.topicProgress[State.activeTopicId].xp += earnedScore;
-                            window.ProfileService.updateStats(State.studentId, State.activeTopicId, earnedScore, timeSpent);
+                            window.ProfileService.updateStats(
+                                State.studentId,
+                                State.activeTopicId,
+                                result.correctCount,    // correctAdded
+                                result.totalQuestions,  // totalAdded
+                                earnedScore,            // xpAdded
+                                timeSpent               // timeAdded
+                            );
 
-                            if (!passed && State.hearts > 0) State.hearts--;
+                            if (!passed && State.hearts > 0) {
+                                State.hearts--;
+                                // Record timer start time - will call startHeartTimer after render
+                                if (!State.nextHeartRestoreTime) {
+                                    State.nextHeartRestoreTime = Date.now() + (5 * 60 * 1000);
+                                    window.ProfileService.updateProgress(State.studentId, { nextHeartRestoreTime: State.nextHeartRestoreTime, hearts: State.hearts });
+                                }
+                            }
 
                             if (result.incorrectResponses) {
                                 result.incorrectResponses.forEach(inc => {
@@ -320,22 +361,15 @@ function render() { // Inside render, code looks at state.view and matches it ag
                         }
 
                         syncState();
-                        
-                        window.ProfileService.logBehaviour('quiz_completed', { 
-                            topicId: State.activeTopicId,
-                            isRevision: isRevision,
-                            score: earnedScore,
-                            correctCount: result.correctCount,
-                            totalQuestions: result.totalQuestions,
-                            timeSpent: timeSpent,
-                            passed: passed
-                        });
-
                         State.view = ROUTES.HOME;
                         render();
+
+                        // Start heart timer AFTER render so #heart-btn exists in the DOM
+                        if (State.hearts < 5 && State.nextHeartRestoreTime) {
+                            startHeartTimer();
+                        }
                     },
                     onExit: () => {
-                        window.ProfileService.logBehaviour('quiz_exited_early', { topicId: State.activeTopicId });
                         State.view = ROUTES.HOME;
                         render();
                     }
@@ -358,7 +392,6 @@ function render() { // Inside render, code looks at state.view and matches it ag
                     onProfileSwitched: () => {
                         const profile = window.ProfileService.getActiveProfile();
                         if (profile) {
-                            window.ProfileService.logBehaviour('profile_switched');
                             loadUser(profile);
                         }
                     }
@@ -374,6 +407,7 @@ function render() { // Inside render, code looks at state.view and matches it ag
     }
 
     if (component) app.appendChild(component);
+
 }
 
 // Heart Timer Logic
@@ -381,23 +415,24 @@ let heartInterval = null;
 
 function startHeartTimer() {
     if (heartInterval) clearInterval(heartInterval);
+    if (State.hearts >= 5) return; // nothing to do
 
-    const updateTimerDisplay = () => {
-        if (!State.nextHeartRestoreTime) {
-            // Clean up if fully restored
+    const REGEN_MS = 5 * 60 * 1000; // 5 minutes per heart
+
+    const tick = () => {
+        if (State.hearts >= 5 || !State.nextHeartRestoreTime) {
             clearInterval(heartInterval);
             heartInterval = null;
-            const el = document.getElementById('heart-timer');
-            if (el) el.textContent = '';
+            // Refresh header so timer span disappears
+            render();
             return;
         }
 
-        const now = Date.now();
-        const diff = State.nextHeartRestoreTime - now;
+        const diff = State.nextHeartRestoreTime - Date.now();
 
         if (diff <= 0) {
-            // Restore Heart
-            State.hearts++;
+            // Restore one heart
+            State.hearts = Math.min(5, State.hearts + 1);
 
             if (State.hearts >= 5) {
                 State.hearts = 5;
@@ -405,34 +440,42 @@ function startHeartTimer() {
                 clearInterval(heartInterval);
                 heartInterval = null;
             } else {
-                // Reset timer for NEXT heart
-                State.nextHeartRestoreTime = Date.now() + (60 * 60 * 1000);
+                // Schedule next heart
+                State.nextHeartRestoreTime = Date.now() + REGEN_MS;
             }
 
-            syncState();
-
-            // Only re-render header info if we are in a view that shows it
-            // Ideally we just update the DOM elements directly to avoid flicker
-            const heartCountEl = document.querySelector('.stats-container .stat-pill');
-            if (heartCountEl) {
-                // Simple re-render to catch everything or manual DOM update
-                // Manual update is safer for preserving input state if any, but render() is fine for this app structure
-                render();
-                return;
+            // Persist
+            if (window.ProfileService && State.studentId) {
+                window.ProfileService.updateProgress(State.studentId, {
+                    hearts: State.hearts,
+                    nextHeartRestoreTime: State.nextHeartRestoreTime
+                });
             }
+
+            // Re-render header so heart count updates
+            render();
+
+            // If still missing hearts, keep ticking
+            if (heartInterval === null && State.hearts < 5) {
+                startHeartTimer();
+            }
+            return;
         }
 
-        // Update Display text
-        const el = document.getElementById('heart-timer');
-        if (el) {
+        // Update the countdown text inside the heart pill
+        const btn = document.getElementById('heart-btn');
+        if (btn) {
             const m = Math.floor(diff / 60000);
             const s = Math.floor((diff % 60000) / 1000);
-            el.textContent = `(+1 in ${m}:${s.toString().padStart(2, '0')})`;
+            const countdown = `(+1 in ${m}:${s.toString().padStart(2, '0')})`;
+            // Replace inner HTML to show updated count + countdown
+            btn.innerHTML = `<span style="margin-right:8px">❤️</span> ${State.hearts} <span id="heart-timer" style="font-size:0.7rem;color:#f87171;margin-left:6px;">${countdown}</span>`;
         }
     };
 
-    heartInterval = setInterval(updateTimerDisplay, 1000);
-    updateTimerDisplay(); // Immediate run
+    heartInterval = setInterval(tick, 1000);
+    // First tick after a short delay so DOM is ready
+    setTimeout(tick, 100);
 }
 
 // Initial Boot

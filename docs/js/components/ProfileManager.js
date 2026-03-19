@@ -176,8 +176,8 @@ window.ProfileManager = function ({ onBack, onProfileSwitched }) {
                 statsBtn.style.marginBottom = '0';
                 statsBtn.onclick = () => {
                     if (window.StatsChart) {
-                        // Use stats (XP + Time) for charts, not just topicProgress
-                        window.StatsChart({ stats: p.stats });
+                        // pass full profile so StatsChart can read stats AND answer_history
+                        window.StatsChart({ profile: p });
                     } else {
                         alert("Charts not loaded");
                     }

@@ -1,112 +1,7 @@
-window.StatsChart = function ({ stats, onClose }) {
+window.StatsChart = function ({ profile, onClose }) {
     try {
-        console.log("Opening StatsChart with:", stats);
-
-        // Modal Container
-        const modal = document.createElement('div');
-        modal.style.position = 'fixed';
-        modal.style.top = '0';
-        modal.style.left = '0';
-        modal.style.right = '0';
-        modal.style.bottom = '0';
-        modal.style.backgroundColor = 'rgba(0,0,0,0.85)';
-        modal.style.zIndex = '1000';
-        modal.style.display = 'flex';
-        modal.style.justifyContent = 'center';
-        modal.style.alignItems = 'center';
-        modal.style.padding = '20px';
-
-        // Content Card
-        const card = document.createElement('div');
-        card.className = 'animate-pop';
-        card.style.backgroundColor = '#1f2937';
-        card.style.borderRadius = '16px';
-        card.style.padding = '20px';
-        card.style.width = '100%';
-        card.style.maxWidth = '500px';
-        card.style.display = 'flex';
-        card.style.flexDirection = 'column';
-        card.style.gap = '16px';
-        card.style.border = '1px solid #374151';
-
-        // Header
-        const header = document.createElement('div');
-        header.style.display = 'flex';
-        header.style.justifyContent = 'space-between';
-        header.style.alignItems = 'center';
-
-        const title = document.createElement('h3');
-        title.textContent = "Proficiency Radar";
-        title.style.margin = '0';
-        header.appendChild(title);
-
-        const closeBtn = document.createElement('button');
-        closeBtn.textContent = '×';
-        closeBtn.style.background = 'transparent';
-        closeBtn.style.border = 'none';
-        closeBtn.style.color = '#9ca3af';
-        closeBtn.style.fontSize = '1.5rem';
-        closeBtn.style.cursor = 'pointer';
-        closeBtn.onclick = () => modal.remove();
-        header.appendChild(closeBtn);
-        card.appendChild(header);
-
-        // Chart Container
-        const canvasContainer = document.createElement('div');
-        canvasContainer.style.position = 'relative';
-        canvasContainer.style.height = '300px';
-        canvasContainer.style.width = '100%';
-
-        const canvas = document.createElement('canvas');
-        canvasContainer.appendChild(canvas);
-        card.appendChild(canvasContainer);
-
-        // Stats Summary Text
-        const summaryDiv = document.createElement('div');
-        summaryDiv.style.display = 'flex';
-        summaryDiv.style.justifyContent = 'space-around';
-        summaryDiv.style.background = '#374151';
-        summaryDiv.style.padding = '12px';
-        summaryDiv.style.borderRadius = '12px';
-        summaryDiv.style.marginTop = '8px';
-
-        // Calculate Totals
-        let totalXP = 0;
-        let totalSeconds = 0;
-        if (stats) {
-            Object.values(stats).forEach(s => {
-                if (s.xp) totalXP += s.xp;
-                if (s.time) totalSeconds += s.time;
-            });
-        }
-
-        // Format time
-        const mins = Math.floor(totalSeconds / 60);
-        const secs = Math.floor(totalSeconds % 60);
-        const timeStr = `${mins}m ${secs}s`;
-
-        summaryDiv.innerHTML = `
-            <div style="text-align:center">
-                 <div style="font-size:0.8rem; color:#9ca3af">Total XP</div>
-                 <div style="font-size:1.2rem; font-weight:bold; color:var(--primary)">${totalXP}</div>
-            </div>
-            <div style="text-align:center">
-                 <div style="font-size:0.8rem; color:#9ca3af">Time Spent</div>
-                 <div style="font-size:1.2rem; font-weight:bold; color:#10b981">${timeStr}</div>
-            </div>
-        `;
-        card.appendChild(summaryDiv);
-
-        // Topic Breakdown
-        const breakdownList = document.createElement('div');
-        breakdownList.style.display = 'flex';
-        breakdownList.style.flexDirection = 'column';
-        breakdownList.style.gap = '8px';
-        breakdownList.style.marginTop = '12px';
-        breakdownList.style.maxHeight = '150px';
-        breakdownList.style.overflowY = 'auto';
-        breakdownList.style.borderTop = '1px solid #374151';
-        breakdownList.style.paddingTop = '12px';
+        const stats = profile ? profile.stats : null;
+        const history = profile ? (profile.answer_history || []) : [];
 
         // Default 8 topics
         const labels = [
@@ -115,69 +10,241 @@ window.StatsChart = function ({ stats, onClose }) {
             "DC vs AC", "3-Phase"
         ];
 
+        // Modal backdrop
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+            position:fixed; top:0; left:0; right:0; bottom:0;
+            background:rgba(0,0,0,0.85);
+            z-index:1000;
+            display:flex; justify-content:center; align-items:center;
+            padding:20px;
+        `;
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+
+        // Main card — landscape
+        const card = document.createElement('div');
+        card.className = 'animate-pop';
+        card.style.cssText = `
+            background:#1f2937;
+            border-radius:16px;
+            border:1px solid #374151;
+            width:100%;
+            max-width:860px;
+            max-height:90vh;
+            display:flex;
+            flex-direction:column;
+            overflow:hidden;
+        `;
+
+        // ── Header ────────────────────────────────────────────────
+        const header = document.createElement('div');
+        header.style.cssText = `
+            display:flex; justify-content:space-between; align-items:center;
+            padding:16px 20px;
+            border-bottom:1px solid #374151;
+            flex-shrink:0;
+        `;
+
+        // Totals for header pills
+        let totalXP = 0, totalSeconds = 0;
+        if (stats) {
+            Object.values(stats).forEach(s => {
+                totalXP += (s.xp || 0);
+                totalSeconds += (s.time || 0);
+            });
+        }
+        const totalMins = Math.floor(totalSeconds / 60);
+        const totalSecs = Math.floor(totalSeconds % 60);
+
+        header.innerHTML = `
+            <div style="display:flex; align-items:center; gap:16px;">
+                <h3 style="margin:0; font-size:1.1rem; color:#e5e7eb;">Proficiency Radar</h3>
+                <span style="font-size:0.8rem; background:rgba(59,130,246,0.15); color:#60a5fa; border:1px solid rgba(59,130,246,0.3); border-radius:20px; padding:3px 10px;">
+                    ⚡ ${totalXP} XP
+                </span>
+                <span style="font-size:0.8rem; background:rgba(16,185,129,0.15); color:#34d399; border:1px solid rgba(16,185,129,0.3); border-radius:20px; padding:3px 10px;">
+                    ⏱ ${totalMins}m ${totalSecs}s
+                </span>
+            </div>
+            <button id="stats-close-btn" style="background:transparent; border:none; color:#9ca3af; font-size:1.5rem; cursor:pointer; line-height:1;">×</button>
+        `;
+        card.appendChild(header);
+        setTimeout(() => {
+            const cb = document.getElementById('stats-close-btn');
+            if (cb) cb.onclick = () => modal.remove();
+        }, 0);
+
+        // ── Body row (radar | stats) ───────────────────────────────
+        const body = document.createElement('div');
+        body.style.cssText = `
+            display:flex;
+            flex:1;
+            overflow:hidden;
+            min-height:0;
+        `;
+
+        // Left: Radar chart
+        const leftCol = document.createElement('div');
+        leftCol.style.cssText = `
+            flex:0 0 380px;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            padding:20px;
+            border-right:1px solid #374151;
+        `;
+
+        const canvasWrap = document.createElement('div');
+        canvasWrap.style.cssText = 'position:relative; width:100%; height:320px;';
+        const canvas = document.createElement('canvas');
+        canvasWrap.appendChild(canvas);
+        leftCol.appendChild(canvasWrap);
+        body.appendChild(leftCol);
+
+        // Right: Topic breakdown + history
+        const rightCol = document.createElement('div');
+        rightCol.style.cssText = `
+            flex:1;
+            display:flex;
+            flex-direction:column;
+            overflow-y:auto;
+            padding:20px;
+            gap:20px;
+        `;
+
+        // ── Topic Breakdown
+        const breakdownWrap = document.createElement('div');
+        breakdownWrap.innerHTML = `<h4 style="margin:0 0 10px; color:#e5e7eb; font-size:0.95rem;">Topic Breakdown</h4>`;
+
+        let anyData = false;
         labels.forEach((label, idx) => {
             const topicId = idx + 1;
-            const s = stats && stats[topicId] ? stats[topicId] : { time: 0 };
+            const s = stats && stats[topicId] ? stats[topicId] : null;
+            if (!s || (s.total === 0 && s.time === 0)) return;
+            anyData = true;
+
             const t = Math.floor(s.time || 0);
             const m = Math.floor(t / 60);
             const sc = t % 60;
+            const scorePercent = Math.round((s.score || 0) * 100);
+            const barColor = scorePercent >= 70 ? '#10b981' : scorePercent >= 40 ? '#f59e0b' : '#ef4444';
 
-            if (t > 0) { // Only show topics with time
-                const row = document.createElement('div');
-                row.style.display = 'flex';
-                row.style.justifyContent = 'space-between';
-                row.style.fontSize = '0.85rem';
-                row.style.color = '#d1d5db';
-                row.innerHTML = `
-                    <span>${label}</span>
-                    <span style="font-family:monospace; color:#10b981">${m}m ${sc}s</span>
-                `;
-                breakdownList.appendChild(row);
-            }
+            // Per-question mastery
+            const mastery = window.ProfileService
+                ? window.ProfileService.getTopicMastery(profile, topicId)
+                : { mastered: 0, attempted: 0 };
+            const masteryColor = mastery.attempted === 0 ? '#6b7280'
+                : mastery.mastered === mastery.attempted ? '#10b981'
+                : '#f59e0b';
+
+            const row = document.createElement('div');
+            row.style.cssText = 'margin-bottom:12px;';
+            row.innerHTML = `
+                <div style="display:flex; justify-content:space-between; align-items:baseline; font-size:0.82rem; color:#d1d5db; margin-bottom:4px;">
+                    <span style="font-weight:500;">${label}</span>
+                    <span style="color:#9ca3af; font-size:0.73rem;">${m}m ${sc}s</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <span style="font-size:0.75rem; color:${masteryColor};">
+                        ⭐ ${mastery.mastered} mastered / ${mastery.attempted} seen
+                    </span>
+                    <span style="font-size:0.73rem; font-weight:bold; color:${barColor};">${scorePercent}% EMA</span>
+                </div>
+                <div style="height:5px; background:#374151; border-radius:3px; overflow:hidden;">
+                    <div style="height:100%; width:${scorePercent}%; background:${barColor}; border-radius:3px; transition:width 0.5s;"></div>
+                </div>
+            `;
+            breakdownWrap.appendChild(row);
         });
 
-        if (breakdownList.children.length === 0) {
-            breakdownList.innerHTML = '<div style="text-align:center; color:#6b7280; font-size:0.8rem;">No activity recorded yet.</div>';
+        if (!anyData) {
+            breakdownWrap.innerHTML += `<div style="color:#6b7280; font-size:0.82rem; text-align:center; padding:16px 0;">No activity recorded yet.</div>`;
         }
+        rightCol.appendChild(breakdownWrap);
 
-        card.appendChild(breakdownList);
 
-        // Close Action
-        const closeAction = document.createElement('button');
-        closeAction.className = 'btn btn-primary';
-        closeAction.textContent = 'CLOSE';
-        closeAction.onclick = () => modal.remove();
-        card.appendChild(closeAction);
+        // ── Recent Attempts
+        const historyWrap = document.createElement('div');
+        historyWrap.innerHTML = `
+            <h4 style="margin:0 0 10px; color:#e5e7eb; font-size:0.95rem; padding-top:12px; border-top:1px solid #374151;">Recent Attempts</h4>
+        `;
+
+        if (history.length === 0) {
+            historyWrap.innerHTML += `<div style="color:#6b7280; font-size:0.82rem; text-align:center; padding:12px 0;">No attempts recorded yet.</div>`;
+        } else {
+            const recent = [...history].reverse().slice(0, 10);
+            recent.forEach(attempt => {
+                const label = attempt.topicId === 'revision' ? 'Revision' : labels[attempt.topicId - 1] || 'Unknown';
+                const t = Math.floor(attempt.time || 0);
+                const m = Math.floor(t / 60);
+                const sc = t % 60;
+                const timeStr = t > 0 ? `${m}m ${sc}s` : 'N/A';
+                let timeAgo = '';
+                if (attempt.timestamp) {
+                    const diff = Math.floor((Date.now() - new Date(attempt.timestamp).getTime()) / 60000);
+                    if (diff < 60) timeAgo = `${diff}m ago`;
+                    else if (diff < 1440) timeAgo = `${Math.floor(diff/60)}h ago`;
+                    else timeAgo = `${Math.floor(diff/1440)}d ago`;
+                }
+                const row = document.createElement('div');
+                row.style.cssText = `
+                    display:flex; justify-content:space-between;
+                    background:rgba(255,255,255,0.03);
+                    border:1px solid #374151;
+                    border-radius:8px; padding:8px 12px;
+                    font-size:0.82rem; color:#d1d5db;
+                    margin-bottom:6px;
+                `;
+                row.innerHTML = `
+                    <div>
+                        <div><strong>${label}</strong> <span style="font-size:0.7rem; color:#6b7280;">${timeAgo}</span></div>
+                        <div style="color:#9ca3af; font-size:0.73rem;">${attempt.correct}/${attempt.total} correct</div>
+                    </div>
+                    <div style="text-align:right;">
+                        <div style="color:#10b981;">${timeStr}</div>
+                        <div style="color:#60a5fa; font-weight:bold;">+${attempt.xp} XP</div>
+                    </div>
+                `;
+                historyWrap.appendChild(row);
+            });
+        }
+        rightCol.appendChild(historyWrap);
+        body.appendChild(rightCol);
+        card.appendChild(body);
+
+        // ── Footer close button
+        const footer = document.createElement('div');
+        footer.style.cssText = 'padding:14px 20px; border-top:1px solid #374151; flex-shrink:0; display:flex; justify-content:flex-end;';
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'btn btn-primary';
+        closeBtn.textContent = 'CLOSE';
+        closeBtn.style.padding = '10px 28px';
+        closeBtn.onclick = () => modal.remove();
+        footer.appendChild(closeBtn);
+        card.appendChild(footer);
 
         modal.appendChild(card);
         document.body.appendChild(modal);
 
-        // Prepare Data for Chart
-        const dataPoints = [1, 2, 3, 4, 5, 6, 7, 8].map(id => {
-            if (stats && stats[id]) {
-                // Normalize? Assuming XP determines level. 
-                // Let's cap at 100 for graph visual
-                return Math.min(stats[id].xp || 0, 100);
-            }
-            return 0;
-        });
+        // ── Render Radar Chart
+        const dataPoints = [1,2,3,4,5,6,7,8].map(id => stats && stats[id] ? (stats[id].score || 0) * 100 : 0);
 
-        // Render Chart
         if (window.Chart) {
             new Chart(canvas, {
                 type: 'radar',
                 data: {
-                    labels: labels,
+                    labels,
                     datasets: [{
-                        label: 'Proficiency (XP)',
+                        label: 'Proficiency (%)',
                         data: dataPoints,
                         fill: true,
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgb(54, 162, 235)',
-                        pointBackgroundColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.15)',
+                        borderColor: 'rgb(59, 130, 246)',
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
                         pointBorderColor: '#fff',
                         pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgb(54, 162, 235)'
+                        pointHoverBorderColor: 'rgb(59, 130, 246)'
                     }]
                 },
                 options: {
@@ -187,26 +254,17 @@ window.StatsChart = function ({ stats, onClose }) {
                         r: {
                             angleLines: { color: '#374151' },
                             grid: { color: '#374151' },
-                            pointLabels: {
-                                color: '#e5e7eb',
-                                font: { size: 10 }
-                            },
-                            ticks: {
-                                display: false,
-                                maxTicksLimit: 5,
-                                backdropColor: 'transparent'
-                            },
+                            pointLabels: { color: '#e5e7eb', font: { size: 10 } },
+                            ticks: { display: false, backdropColor: 'transparent' },
                             suggestedMin: 0,
                             suggestedMax: 100
                         }
                     },
-                    plugins: {
-                        legend: { display: false }
-                    }
+                    plugins: { legend: { display: false } }
                 }
             });
         } else {
-            canvasContainer.innerHTML = '<p style="text-align:center; color:red;">Chart.js library not loaded.</p>';
+            canvasWrap.innerHTML = '<p style="text-align:center; color:red;">Chart.js not loaded.</p>';
         }
 
         return modal;
