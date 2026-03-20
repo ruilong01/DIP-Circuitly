@@ -267,38 +267,53 @@ app.get('/api/behaviours', async (req, res) => {
 });
 
 // Gemini API Proxy
-app.post('/api/chat', async (req, res) => {
-    try {
-        const { payload } = req.body;
-        const apiKey = process.env.GEMINI_API_KEY;
-        
-        if (!apiKey) {
-            return res.status(500).json({ success: false, error: 'GEMINI_API_KEY is not configured on the server.' });
+const https = require('https');
+
+app.post('/api/chat', (req, res) => {
+    const { payload } = req.body;
+    const apiKey = process.env.GEMINI_API_KEY;
+    
+    if (!apiKey) {
+        return res.status(500).json({ success: false, error: 'GEMINI_API_KEY is not configured on the server.' });
+    }
+
+    const postData = JSON.stringify(payload);
+    
+    const options = {
+        hostname: 'generativelanguage.googleapis.com',
+        port: 443,
+        path: `/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Content-Length': Buffer.byteLength(postData)
         }
+    };
 
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-
-        // Node.js 18+ has native fetch support
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
+    const request = https.request(options, (response) => {
+        let rawData = '';
+        response.on('data', (chunk) => { rawData += chunk; });
+        response.on('end', () => {
+            try {
+                const data = JSON.parse(rawData);
+                if (response.statusCode < 200 || response.statusCode >= 300) {
+                    console.error("Gemini API Error:", data);
+                    return res.status(response.statusCode).json({ success: false, error: data.error?.message || "Failed to reach Gemini API." });
+                }
+                res.json({ success: true, data });
+            } catch (e) {
+                res.status(500).json({ success: false, error: 'Failed to parse Gemini API response' });
+            }
         });
+    });
 
-        const data = await response.json();
-
-        if (!response.ok) {
-            console.error("Gemini API Error:", data);
-            return res.status(response.status).json({ success: false, error: data.error?.message || "Failed to reach Gemini API." });
-        }
-
-        res.json({ success: true, data });
-    } catch (err) {
+    request.on('error', (err) => {
         console.error("Chat proxy error:", err);
         res.status(500).json({ success: false, error: err.message });
-    }
+    });
+
+    request.write(postData);
+    request.end();
 });
 
 // Catch-all route to serve the frontend for any non-API requests (Useful for SPA routing)
