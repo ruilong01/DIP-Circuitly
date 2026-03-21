@@ -80,9 +80,12 @@ window.AdminDashboard = function ({ onViewAsUser }) {
     // ══════════════════════════════════════════════════════════════
     // USERS TAB
     // ══════════════════════════════════════════════════════════════
-    async function renderUsersTab() {
-        contentArea.innerHTML = '<div style="padding:20px; color:#9ca3af; text-align:center;">Loading users...</div>';
+    async function renderUsersTab(isSilent = false) {
+        if (!isSilent) {
+            contentArea.innerHTML = '<div style="padding:20px; color:#9ca3af; text-align:center;">Loading users...</div>';
+        }
         const profiles = window.ProfileService ? await window.ProfileService.getAllProfiles() : [];
+        if (activeTab !== 'users') return; // Cancel if tab was changed during the fetch
         contentArea.innerHTML = '';
 
         const wrap = document.createElement('div');
@@ -562,5 +565,17 @@ window.AdminDashboard = function ({ onViewAsUser }) {
     }
 
     renderContent();
+
+    // Auto-refresh users tab silently every 30 seconds
+    const adminTimer = setInterval(() => {
+        if (!document.body.contains(container)) {
+            clearInterval(adminTimer);
+            return;
+        }
+        if (activeTab === 'users') {
+            renderUsersTab(true);
+        }
+    }, 30000);
+
     return container;
 };

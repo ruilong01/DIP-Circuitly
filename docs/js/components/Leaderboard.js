@@ -7,7 +7,7 @@ window.Leaderboard = function ({ onViewPlayerProfile } = {}) {
         if (window.ProfileService && window.ProfileService.getAllProfiles) {
             await window.ProfileService.getAllProfiles();
         }
-        const players = window.ProfileService.getLeaderboard();
+        let players = window.ProfileService.getLeaderboard();
         const topicLabels = [
             "Fundamentals", "Energy Storage", "Transient/Steady",
             "Op-Amps", "Laplace", "Network Func",
@@ -437,6 +437,19 @@ window.Leaderboard = function ({ onViewPlayerProfile } = {}) {
 
     wrapper.innerHTML = '';
     wrapper.appendChild(container);
+
+    // Auto-refresh leaderboard silently every 30 seconds
+    const lbTimer = setInterval(async () => {
+        if (!document.body.contains(wrapper)) {
+            clearInterval(lbTimer);
+            return;
+        }
+        if (window.ProfileService && window.ProfileService.getAllProfiles) {
+            await window.ProfileService.getAllProfiles();
+            players = window.ProfileService.getLeaderboard();
+            renderLeaderboard();
+        }
+    }, 30000);
     }, 0);
 
     return wrapper;
