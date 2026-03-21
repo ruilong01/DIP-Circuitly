@@ -75,6 +75,7 @@ app.post('/api/auth/login', async (req, res) => {
             xp: user.xp,
             hearts: user.hearts,
             role: user.role,
+            answer_history: user.answer_history || [],
             topicProgress: {}
         };
 
@@ -83,10 +84,12 @@ app.post('/api/auth/login', async (req, res) => {
             [user.id]
         );
 
-        profile.stats = {};
+        profile.stats = user.stats || {};
         progResult.rows.forEach((row) => {
             profile.topicProgress[row.topic_id] = { xp: row.xp_earned };
-            profile.stats[row.topic_id] = { xp: row.xp_earned, time: row.time_spent || 0 };
+            if (!profile.stats[row.topic_id] || Object.keys(profile.stats[row.topic_id]).length === 0) {
+                profile.stats[row.topic_id] = { xp: row.xp_earned, time: row.time_spent || 0 };
+            }
         });
 
         res.json({ success: true, user: profile });

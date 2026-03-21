@@ -32,6 +32,13 @@ window.AdminDashboard = function ({ onViewAsUser }) {
     exportBtn.onclick = () => { if (window.ProfileService) window.ProfileService.exportToExcel(); };
     headerBtns.appendChild(exportBtn);
 
+    const analyticsBtn = document.createElement('button');
+    analyticsBtn.className = 'btn';
+    analyticsBtn.style.cssText = 'background:#8b5cf6; color:white; padding:8px 18px; border-radius:8px; cursor:pointer; font-weight:600; border:none;';
+    analyticsBtn.innerHTML = '📈 Analytics Dashboard';
+    analyticsBtn.onclick = () => { window.open('dev-dashboard.html', '_blank'); };
+    headerBtns.appendChild(analyticsBtn);
+
     headerRow.appendChild(headerBtns);
     container.appendChild(headerRow);
 
