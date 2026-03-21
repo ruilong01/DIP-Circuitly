@@ -405,7 +405,12 @@ function render() { // Inside render, code looks at state.view and matches it ag
 
         case ROUTES.ADMIN:
             if (window.AdminDashboard) {
-                component = window.AdminDashboard({});
+                component = window.AdminDashboard({
+                    onViewAsUser: () => {
+                        State.view = ROUTES.HOME;
+                        render();
+                    }
+                });
             }
             break;
     }
