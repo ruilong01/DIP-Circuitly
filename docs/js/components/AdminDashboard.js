@@ -18,8 +18,8 @@ window.AdminDashboard = function ({ onLogout }) {
         
         // 1. App Configuration
         results += "1. APP CONFIGURATION\n";
-        if (window.CONFIG && window.CONFIG.API_BASE_URL) {
-            results += `✅ OK - API Base URL: ${window.CONFIG.API_BASE_URL}\n`;
+        if (window.CONFIG && typeof window.CONFIG.API_BASE_URL !== 'undefined') {
+            results += `✅ OK - API Base URL: ${window.CONFIG.API_BASE_URL || '(relative path)'}\n`;
         } else {
             results += "❌ FAILED - window.CONFIG.API_BASE_URL is missing!\n";
         }

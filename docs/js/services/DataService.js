@@ -39,7 +39,7 @@ window.DataService = {
     init: async () => {
         // Ping backend to determine online status
         try {
-            if (window.CONFIG && window.CONFIG.API_BASE_URL) {
+            if (window.CONFIG && typeof window.CONFIG.API_BASE_URL !== 'undefined') {
                 const res = await fetch(`${window.CONFIG.API_BASE_URL}/api/health`, { method: 'GET' });
                 if (res.ok) {
                     window.DataService.isOnline = true;

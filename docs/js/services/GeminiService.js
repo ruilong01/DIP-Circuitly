@@ -21,7 +21,7 @@ window.GeminiService = {
      * @returns {string} - The response text from the AI.
      */
     sendMessage: async function (userMessage) {
-        if (!window.CONFIG || !window.CONFIG.API_BASE_URL) {
+        if (!window.CONFIG || typeof window.CONFIG.API_BASE_URL === 'undefined') {
             return "Configuration missing. Cannot connect to the backend.";
         }
 
