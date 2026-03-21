@@ -78,7 +78,23 @@ window.ProfileService = {
             try {
                 const res = await fetch(`${window.CONFIG.API_BASE_URL}/api/users`);
                 const data = await res.json();
-                if (data.success) {
+                if (data.success && Array.isArray(data.users)) {
+                    data.users.forEach(ru => {
+                        const existing = this.profiles.find(p => p.studentId === ru.studentId);
+                        if (existing) {
+                            existing.name = ru.name;
+                            existing.xp = ru.xp;
+                            existing.hearts = ru.hearts;
+                            existing.role = ru.role;
+                            existing.topicProgress = ru.topicProgress || {};
+                            existing.lastActive = ru.lastActive;
+                            existing.answer_history = ru.answer_history || [];
+                            existing.stats = ru.stats || {};
+                        } else {
+                            this.profiles.push({ ...ru });
+                        }
+                    });
+                    this.save();
                     return data.users;
                 }
             } catch (e) {
