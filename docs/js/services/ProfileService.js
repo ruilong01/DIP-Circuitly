@@ -19,6 +19,52 @@ window.ProfileService = {
         if (active) {
             this.activeProfileId = active;
         }
+
+        // Start the background data sync interval
+        this.startBackgroundSync();
+    },
+
+    startBackgroundSync: function() {
+        // Run every 60 seconds (60,000 ms)
+        setInterval(() => {
+            if (window.DataService && window.DataService.isOnline) {
+                const payload = this.buildSyncPayload();
+                if (payload) {
+                    try {
+                        fetch(`${window.CONFIG.API_BASE_URL}/api/progress`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        }).catch(e => console.warn("1-minute background progress sync failed:", e));
+                    } catch (e) {
+                        console.error("1-minute background progress sync failed:", e);
+                    }
+                }
+            }
+        }, 60000);
+    },
+
+    buildSyncPayload: function() {
+        if (!this.activeProfileId || this.activeProfileId === 'ADMIN') return null;
+        
+        const profile = this.getActiveProfile();
+        if(!profile) return null;
+        
+        let syncProg = {};
+        if (profile.topicProgress) {
+            for (const [tId, data] of Object.entries(profile.topicProgress)) {
+                syncProg[tId] = {
+                    xp: data.xp,
+                    time: (profile.stats && profile.stats[tId] && profile.stats[tId].time) ? profile.stats[tId].time : 0
+                };
+            }
+        }
+        return {
+            studentId: profile.studentId,
+            xp: profile.xp,
+            hearts: profile.hearts,
+            topicProgress: syncProg
+        };
     },
 
     getProfiles: function () {
@@ -251,17 +297,15 @@ window.ProfileService = {
 
             if (window.DataService && window.DataService.isOnline && studentId !== 'ADMIN') {
                 try {
-                    // Fire-and-forget to backend so it doesn't block UI
-                    fetch(`${window.CONFIG.API_BASE_URL}/api/progress`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            studentId: studentId,
-                            xp: profile.xp,
-                            hearts: profile.hearts,
-                            topicProgress: profile.topicProgress
-                        })
-                    }).catch(e => console.warn("Background progress sync failed:", e));
+                    const payload = this.buildSyncPayload();
+                    if (payload) {
+                        // Fire-and-forget to backend so it doesn't block UI
+                        fetch(`${window.CONFIG.API_BASE_URL}/api/progress`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        }).catch(e => console.warn("Background progress sync failed:", e));
+                    }
                 } catch (e) {
                     console.error("Backend progress sync failed:", e);
                 }

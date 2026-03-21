@@ -61,7 +61,18 @@ window.GeminiService = {
                 body: JSON.stringify({ payload })
             });
 
-            const result = await response.json();
+            let result;
+            const textResponse = await response.text();
+            
+            try {
+                result = JSON.parse(textResponse);
+            } catch (e) {
+                this.history.pop();
+                if (textResponse.includes("upstream request timeout") || response.status === 504) {
+                    throw new Error("The AI took too long to respond. Please try again.");
+                }
+                throw new Error(`Server returned an invalid format: ${textResponse.substring(0, 50)}...`);
+            }
 
             if (!response.ok || !result.success) {
                 console.error("Gemini API Error:", result);

@@ -3,7 +3,7 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const path = require('path');
 const db = require('./config/db');
-require('dotenv').config();
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const dns = require('dns');
 dns.setDefaultResultOrder('ipv4first'); // Fix Node 18 native fetch failing in AWS App Runner
@@ -79,12 +79,14 @@ app.post('/api/auth/login', async (req, res) => {
         };
 
         const progResult = await db.query(
-            'SELECT topic_id, xp_earned FROM topic_progress WHERE user_id = $1',
+            'SELECT topic_id, xp_earned, time_spent FROM topic_progress WHERE user_id = $1',
             [user.id]
         );
 
+        profile.stats = {};
         progResult.rows.forEach((row) => {
             profile.topicProgress[row.topic_id] = { xp: row.xp_earned };
+            profile.stats[row.topic_id] = { xp: row.xp_earned, time: row.time_spent || 0 };
         });
 
         res.json({ success: true, user: profile });
@@ -170,7 +172,7 @@ app.post('/api/progress', async (req, res) => {
                  ON CONFLICT (user_id, topic_id) 
                  DO UPDATE SET 
                     xp_earned = EXCLUDED.xp_earned, 
-                    time_spent = topic_progress.time_spent + EXCLUDED.time_spent,
+                    time_spent = EXCLUDED.time_spent,
                     last_attempt = NOW()`,
                 [userId, parseInt(topicId, 10), data.xp, timeToAdd]
             );
@@ -287,7 +289,8 @@ app.post('/api/chat', (req, res) => {
         headers: {
             'Content-Type': 'application/json',
             'Content-Length': Buffer.byteLength(postData)
-        }
+        },
+        timeout: 25000 // 25 seconds timeout to prevent AWS App Runner upstream timeout
     };
 
     const request = https.request(options, (response) => {
@@ -298,18 +301,34 @@ app.post('/api/chat', (req, res) => {
                 const data = JSON.parse(rawData);
                 if (response.statusCode < 200 || response.statusCode >= 300) {
                     console.error("Gemini API Error:", data);
-                    return res.status(response.statusCode).json({ success: false, error: data.error?.message || "Failed to reach Gemini API." });
+                    if (!res.headersSent) {
+                        return res.status(response.statusCode).json({ success: false, error: data.error?.message || "Failed to reach Gemini API." });
+                    }
                 }
-                res.json({ success: true, data });
+                if (!res.headersSent) {
+                    res.json({ success: true, data });
+                }
             } catch (e) {
-                res.status(500).json({ success: false, error: 'Failed to parse Gemini API response' });
+                if (!res.headersSent) {
+                    res.status(500).json({ success: false, error: 'Failed to parse Gemini API response' });
+                }
             }
         });
     });
 
+    request.on('timeout', () => {
+        console.error("Gemini API Request timed out.");
+        request.destroy();
+        if (!res.headersSent) {
+            res.status(504).json({ success: false, error: 'The AI took too long to respond. Please try again.' });
+        }
+    });
+
     request.on('error', (err) => {
         console.error("Chat proxy error:", err);
-        res.status(500).json({ success: false, error: err.message });
+        if (!res.headersSent) {
+            res.status(500).json({ success: false, error: err.message });
+        }
     });
 
     request.write(postData);
