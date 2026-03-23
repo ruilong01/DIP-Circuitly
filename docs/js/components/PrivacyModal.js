@@ -40,7 +40,7 @@ window.PrivacyModal = function ({ onAccept }) {
     message.style.lineHeight = '1.6';
     message.style.marginBottom = '32px';
     message.innerHTML = `
-        To improve the performance and user experience of this app, some user data may be collected and stored, such as progress, scores, and usage activity. This data is used only for app improvement, learning analytics, and feature refinement, and will not be used for any unrelated purpose or shared without permission. By continuing, you acknowledge and accept this privacy notice.
+        To proceed, please review and complete the consent form: https://forms.office.com/r/3qnwPbAbQM. Once you have submitted your response, you may continue to the application.
     `;
     card.appendChild(message);
 
