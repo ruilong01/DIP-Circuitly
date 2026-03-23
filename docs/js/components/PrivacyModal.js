@@ -40,7 +40,11 @@ window.PrivacyModal = function ({ onAccept }) {
     message.style.lineHeight = '1.6';
     message.style.marginBottom = '32px';
     message.innerHTML = `
-        To proceed, please review and complete the consent form: https://forms.office.com/r/3qnwPbAbQM. Once you have submitted your response, you may continue to the application.
+        To proceed, please review and complete the 
+        <a href="https://forms.office.com/r/3qnwPbAbQM" target="_blank" style="color: var(--primary-color); text-decoration: underline;">
+            consent form
+        </a>. 
+        Once you have submitted your response, you may continue to the application.
     `;
     card.appendChild(message);
 
