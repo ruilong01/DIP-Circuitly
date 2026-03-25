@@ -1,4 +1,4 @@
-window.Home = function ({ topicProgress, revisionPoolCount, unfamiliarPoolCount, onStart, onStartRevision, onStartUnfamiliar }) {
+window.Home = function ({ topicProgress, revisionPoolCount, unfamiliarPoolCount, onStart, onStartRevision, onStartUnfamiliar, onDiscussion }) {
     const topics = window.DataService.getTopics();
     const container = document.createElement('div');
     container.className = 'dashboard-container animate-fade-in';
@@ -7,9 +7,51 @@ window.Home = function ({ topicProgress, revisionPoolCount, unfamiliarPoolCount,
     const header = document.createElement('div');
     header.className = 'dashboard-header';
     header.innerHTML = `
-        <h1 class="brand-title">Impulse</h1>
+        <h1 class="brand-title" style="display:inline-block; margin-right: 15px;">Impulse</h1>
+        <button id="info-guide-btn" style="background:transparent; border:none; font-size:1.5rem; cursor:pointer; color:var(--accent); vertical-align: text-bottom; transition: transform 0.2s;" title="How it Works">ℹ️</button>
+        <button id="discussion-btn" style="background:transparent; border:none; font-size:1.5rem; cursor:pointer; vertical-align: text-bottom; transition: transform 0.2s; margin-left: 8px;" title="Discussion Panel">💬</button>
         <p class="brand-motto">Mastery in every pulse.</p>
     `;
+
+    const infoBtn = header.querySelector('#info-guide-btn');
+    if (infoBtn) {
+        infoBtn.onmouseenter = () => infoBtn.style.transform = 'scale(1.1)';
+        infoBtn.onmouseleave = () => infoBtn.style.transform = 'scale(1)';
+        infoBtn.onclick = () => {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.85); z-index:1000; display:flex; justify-content:center; align-items:center; padding:20px;';
+            const card = document.createElement('div');
+            card.className = 'card-glass animate-pop';
+            card.style.cssText = 'max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; padding: 30px; position: relative; text-align: left;';
+            card.innerHTML = `
+                <button id="close-guide-btn" style="position:absolute; top:20px; right:20px; background:transparent; border:none; color:#9ca3af; font-size:1.5rem; cursor:pointer; line-height:1;">×</button>
+                <h2 style="color:var(--accent); margin-bottom:20px; font-size:1.8rem; margin-top:0;">How Impulse Works</h2>
+                <div style="color:var(--text-main); font-size:0.95rem; line-height:1.6; display:flex; flex-direction:column; gap:16px;">
+                    <div><strong>⚡ XP & Levels:</strong> Earn XP by answering questions correctly. Accumulate 100 XP in a module to level up and unlock harder questions via adaptive difficulty.</div>
+                    <div><strong>📊 EMA (Proficiency Score):</strong> Your module score is based on an Exponential Moving Average. This means recent attempts carry more weight. If you improve, your score adapts quickly and forgives past mistakes!</div>
+                    <div><strong>🏆 Weekly Champions:</strong> The podium highlights the top players based ONLY on XP earned in the last 7 days. Climb the ranks every week!</div>
+                    <div><strong>🔄 Revision Module:</strong> Whenever you answer a question incorrectly, it's saved here. Practice this pool regularly to turn your weaknesses into strengths.</div>
+                    <div><strong>⚠️ Unfamiliar Concepts:</strong> If you face a theory question you have no clue about, tap 'Not Familiar'. It automatically skips the question and logs it here for you to review the explanation later.</div>
+                    <div><strong>💬 Discussion Panel:</strong> Encounter a buggy question or need help? Post it in the discussion board with a screenshot!</div>
+                </div>
+            `;
+            modal.appendChild(card);
+            document.body.appendChild(modal);
+
+            card.querySelector('#close-guide-btn').onclick = () => modal.remove();
+            modal.onclick = (e) => { if(e.target === modal) modal.remove(); }
+        };
+    }
+
+    const discussionBtn = header.querySelector('#discussion-btn');
+    if (discussionBtn) {
+        discussionBtn.onmouseenter = () => discussionBtn.style.transform = 'scale(1.1)';
+        discussionBtn.onmouseleave = () => discussionBtn.style.transform = 'scale(1)';
+        discussionBtn.onclick = () => {
+            if (onDiscussion) onDiscussion();
+        };
+    }
+
     container.appendChild(header);
 
     // Topics Grid

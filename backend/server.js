@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(cors()); // In production, you might want to restrict this to your GitHub Pages domain
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 
 // Serve frontend static files
 app.use(express.static(path.join(__dirname, '../docs')));
@@ -190,6 +190,40 @@ app.post('/api/progress', async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, error: 'Failed to save progress' });
+    }
+});
+
+// --- DISCUSSIONS ENDPOINTS ---
+app.get('/api/discussions', async (req, res) => {
+    try {
+        const result = await db.query(`
+            SELECT d.id, d.content, d.image_data as "imageData", d.timestamp, u.name, u.student_id AS "studentId", u.role 
+            FROM discussions d
+            JOIN users u ON d.user_id = u.id
+            ORDER BY d.timestamp DESC
+            LIMIT 100
+        `);
+        res.json({ success: true, discussions: result.rows });
+    } catch (err) {
+        console.error('Failed to fetch discussions:', err);
+        res.status(500).json({ success: false, error: 'Failed to fetch discussions' });
+    }
+});
+
+app.post('/api/discussions', async (req, res) => {
+    const { studentId, content, imageData } = req.body;
+    try {
+        const userRes = await db.query('SELECT id FROM users WHERE student_id = $1', [studentId]);
+        if (userRes.rows.length === 0) return res.status(404).json({ success: false, error: 'User not found' });
+        
+        await db.query(
+            'INSERT INTO discussions (user_id, content, image_data) VALUES ($1, $2, $3)',
+            [userRes.rows[0].id, content, imageData || null]
+        );
+        res.status(201).json({ success: true });
+    } catch (err) {
+        console.error('Failed to post discussion:', err);
+        res.status(500).json({ success: false, error: 'Failed to post discussion' });
     }
 });
 

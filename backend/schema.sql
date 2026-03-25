@@ -54,3 +54,12 @@ CREATE TABLE IF NOT EXISTS user_behaviours (
     timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx_behaviours_user ON user_behaviours(user_id);
+
+CREATE TABLE IF NOT EXISTS discussions (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    image_data TEXT,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_discussions_recent ON discussions(timestamp DESC);

@@ -52,10 +52,9 @@ window.StatsChart = function ({ profile, onClose, compareWithProfile }) {
         `;
 
         // Totals for header pills
-        let totalXP = 0, totalSeconds = 0;
+        let totalXP = profile ? (profile.xp || 0) : 0, totalSeconds = 0;
         if (stats) {
             Object.values(stats).forEach(s => {
-                totalXP += (s.xp || 0);
                 totalSeconds += (s.time || 0);
             });
         }

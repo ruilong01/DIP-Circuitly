@@ -9,7 +9,8 @@ const ROUTES = { // constant object used as maps like buttons on an elevator
     PROFILES: 'profiles',
     ADMIN: 'admin',
     UNFAMILIAR: 'unfamiliar',
-    LEADERBOARD: 'leaderboard'
+    LEADERBOARD: 'leaderboard',
+    DISCUSSION: 'discussion'
 };
 
 // Global State
@@ -317,6 +318,10 @@ function render() { // Inside render, code looks at state.view and matches it ag
                         window.ProfileService.logBehaviour('start_unfamiliar');
                         State.view = ROUTES.UNFAMILIAR;
                         render();
+                    },
+                    onDiscussion: () => {
+                        State.view = ROUTES.DISCUSSION;
+                        render();
                     }
                 });
             }
@@ -326,6 +331,17 @@ function render() { // Inside render, code looks at state.view and matches it ag
             if (window.UnfamiliarConceptsModule) {
                 component = window.UnfamiliarConceptsModule({
                     onExit: () => {
+                        State.view = ROUTES.HOME;
+                        render();
+                    }
+                });
+            }
+            break;
+
+        case ROUTES.DISCUSSION:
+            if (window.DiscussionPanel) {
+                component = window.DiscussionPanel({
+                    onBack: () => {
                         State.view = ROUTES.HOME;
                         render();
                     }
@@ -415,6 +431,15 @@ function render() { // Inside render, code looks at state.view and matches it ag
                         } else {
                             earnedScore = result.correctCount;
                             State.xp += earnedScore;
+                            
+                            window.ProfileService.updateStats(
+                                State.studentId,
+                                'revision', // topicId as revision string
+                                result.correctCount,
+                                result.totalQuestions,
+                                earnedScore,
+                                timeSpent
+                            );
                         }
 
                         syncState();
